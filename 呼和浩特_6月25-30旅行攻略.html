@@ -1,0 +1,3274 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>呼和浩特 6月25日-30日旅行攻略 - 智能旅行指南</title>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="">
+  <style>
+    :root {
+      --primary: #2d6a4f;      /* 草原绿 */
+      --primary-light: #d8f3dc;
+      --secondary: #235c7d;    /* 青天蓝 */
+      --accent-red: #a83a32;   /* 召庙红 */
+      --accent-gold: #b88a44;  /* 沙漠金 */
+      --accent-gold-light: #f5efe4;
+      --bg-paper: #faf9f5;     /* 温暖纸张色 */
+      --bg-card: #ffffff;
+      --text-main: #2a332f;    /* 深黑绿，比纯黑更温和 */
+      --text-muted: #5a6660;
+      --line: #e2e7e3;
+      --shadow-sm: 0 4px 10px rgba(45, 106, 79, 0.04);
+      --shadow-md: 0 10px 25px rgba(29, 43, 37, 0.08);
+      --shadow-lg: 0 20px 45px rgba(29, 43, 37, 0.12);
+      --transition: all 0.35s cubic-bezier(0.25, 0.8, 0.25, 1);
+      --font-serif: "Georgia", "STSong", "Songti SC", "SimSun", serif;
+      --font-sans: "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "Noto Sans CJK SC", sans-serif;
+    }
+
+    * { box-sizing: border-box; }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      color: var(--text-main);
+      background: var(--bg-paper);
+      font-family: var(--font-sans);
+      line-height: 1.75;
+      position: relative;
+    }
+
+    /* 滚动进度条 */
+    .scroll-progress {
+      position: fixed;
+      top: 0;
+      left: 0;
+      height: 4px;
+      background: linear-gradient(to right, var(--primary), var(--accent-gold));
+      width: 0%;
+      z-index: 1000;
+      transition: width 0.1s ease;
+    }
+
+    a { 
+      color: var(--secondary); 
+      text-decoration: none; 
+      transition: var(--transition);
+      border-bottom: 1px dashed rgba(35, 92, 125, 0.4);
+    }
+    a:hover { 
+      color: var(--primary); 
+      border-bottom-style: solid;
+    }
+
+    /* 头部 Hero 视觉升级 */
+    .hero {
+      min-height: 85vh;
+      display: grid;
+      align-items: end;
+      position: relative;
+      overflow: hidden;
+      color: #fff;
+      background:
+        linear-gradient(180deg, rgba(17, 26, 22, 0.15) 0%, rgba(17, 26, 22, 0.45) 50%, rgba(20, 30, 26, 0.95) 100%),
+        url("https://commons.wikimedia.org/wiki/Special:FilePath/Hohhot%20Dazhao%20temple.mur.jpg") center/cover no-repeat;
+      padding-top: 60px;
+    }
+
+    .hero::after {
+      content: "";
+      position: absolute;
+      inset: auto 0 0 0;
+      height: 150px;
+      background: linear-gradient(180deg, transparent, var(--bg-paper));
+      pointer-events: none;
+    }
+
+    .hero-inner {
+      width: min(1200px, calc(100% - 40px));
+      margin: 0 auto;
+      padding: 80px 0 120px;
+      position: relative;
+      z-index: 2;
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      gap: 10px;
+      align-items: center;
+      padding: 6px 16px;
+      border: 1px solid rgba(255,255,255,0.4);
+      border-radius: 999px;
+      background: rgba(255,255,255,0.15);
+      backdrop-filter: blur(10px);
+      font-size: 14px;
+      letter-spacing: 2px;
+      font-weight: 500;
+      animation: fadeInUp 0.8s ease;
+    }
+
+    h1 {
+      margin: 24px 0 18px;
+      max-width: 900px;
+      font-family: var(--font-serif);
+      font-size: clamp(38px, 6vw, 76px);
+      line-height: 1.15;
+      font-weight: 800;
+      text-shadow: 0 2px 10px rgba(0,0,0,0.3);
+      animation: fadeInUp 1s ease;
+    }
+
+    .hero p {
+      max-width: 750px;
+      margin: 0 0 40px;
+      font-size: clamp(16px, 1.8vw, 22px);
+      color: rgba(255,255,255,0.95);
+      text-shadow: 0 1px 5px rgba(0,0,0,0.2);
+      line-height: 1.6;
+      animation: fadeInUp 1.2s ease;
+    }
+
+    .hero-stats {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 16px;
+      max-width: 1000px;
+      animation: fadeInUp 1.4s ease;
+    }
+
+    .stat {
+      padding: 20px;
+      border: 1px solid rgba(255,255,255,0.2);
+      border-radius: 12px;
+      background: rgba(255,255,255,0.1);
+      backdrop-filter: blur(15px);
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+      transition: var(--transition);
+    }
+    .stat:hover {
+      transform: translateY(-5px);
+      border-color: rgba(255,255,255,0.5);
+      background: rgba(255,255,255,0.18);
+    }
+
+    .stat strong {
+      display: block;
+      font-size: clamp(18px, 1.8vw, 22px);
+      color: #fff;
+      font-family: var(--font-serif);
+      border-left: 3px solid var(--accent-gold);
+      padding-left: 10px;
+      line-height: 1.2;
+    }
+
+    .stat span {
+      display: block;
+      margin-top: 8px;
+      color: rgba(255,255,255,0.85);
+      font-size: 13px;
+    }
+
+    /* 整体双栏布局设计 */
+    .container {
+      width: min(1200px, calc(100% - 40px));
+      margin: 0 auto;
+      padding-bottom: 100px;
+      display: grid;
+      grid-template-columns: 280px 1fr;
+      gap: 40px;
+      position: relative;
+    }
+
+    /* 侧边导航 / 进度条追踪 */
+    aside {
+      position: sticky;
+      top: 40px;
+      height: calc(100vh - 80px);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      padding: 20px 0;
+      border-right: 1px solid var(--line);
+    }
+
+    .nav-menu {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      max-height: 80vh;
+      overflow-y: auto;
+    }
+
+    .nav-item {
+      position: relative;
+    }
+
+    .nav-link {
+      display: flex;
+      align-items: center;
+      padding: 10px 20px 10px 15px;
+      color: var(--text-muted);
+      font-weight: 500;
+      font-size: 15px;
+      border-bottom: none;
+      border-left: 3px solid transparent;
+      border-radius: 0 8px 8px 0;
+      transition: var(--transition);
+    }
+    .nav-link:hover {
+      color: var(--primary);
+      background: rgba(45, 106, 79, 0.05);
+      border-left-color: var(--primary-light);
+    }
+    .nav-link.active {
+      color: var(--primary);
+      font-weight: 700;
+      background: var(--primary-light);
+      border-left-color: var(--primary);
+    }
+
+    .nav-link-sub {
+      padding-left: 30px;
+      font-size: 13px;
+    }
+
+    aside .brand {
+      font-family: var(--font-serif);
+      font-weight: 800;
+      color: var(--primary);
+      font-size: 18px;
+      padding-left: 15px;
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    /* 主内容区 */
+    main {
+      min-width: 0; /* 防止内容撑破 */
+    }
+
+    section {
+      padding: 40px 0;
+      border-bottom: 1px solid var(--line);
+      scroll-margin-top: 40px;
+    }
+    section:last-of-type {
+      border-bottom: none;
+    }
+
+    h2 {
+      font-family: var(--font-serif);
+      font-size: clamp(28px, 4vw, 36px);
+      color: var(--primary);
+      margin: 0 0 24px;
+      position: relative;
+      display: inline-block;
+    }
+
+    h2::after {
+      content: "";
+      position: absolute;
+      left: 0;
+      bottom: -6px;
+      width: 50px;
+      height: 3px;
+      background: var(--accent-gold);
+      border-radius: 2px;
+    }
+
+    h3 {
+      font-family: var(--font-serif);
+      margin: 0 0 12px;
+      font-size: 21px;
+      color: #1a2521;
+      line-height: 1.3;
+    }
+
+    .lead {
+      font-size: 18px;
+      color: var(--text-muted);
+      margin: 0 0 30px;
+      line-height: 1.8;
+      font-family: var(--font-serif);
+    }
+
+    /* 提示横幅样式 */
+    .notice {
+      display: grid;
+      grid-template-columns: auto 1fr;
+      gap: 20px;
+      padding: 24px;
+      background: var(--accent-gold-light);
+      border-left: 6px solid var(--accent-gold);
+      border-radius: 12px;
+      box-shadow: var(--shadow-sm);
+      align-items: start;
+    }
+
+    .notice-icon {
+      font-size: 28px;
+      color: var(--accent-gold);
+      line-height: 1;
+    }
+
+    .notice b {
+      display: block;
+      color: #61400a;
+      font-size: 18px;
+      margin-bottom: 6px;
+    }
+
+    .notice div {
+      color: #615035;
+      font-size: 15px;
+      line-height: 1.6;
+    }
+
+    /* 网格卡片 */
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 24px;
+    }
+
+    .card {
+      overflow: hidden;
+      background: var(--bg-card);
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      box-shadow: var(--shadow-md);
+      transition: var(--transition);
+      display: flex;
+      flex-direction: column;
+      cursor: pointer;
+    }
+
+    .card:hover {
+      transform: translateY(-8px) scale(1.01);
+      box-shadow: var(--shadow-lg);
+      border-color: rgba(45, 106, 79, 0.2);
+    }
+
+    .card-img-wrapper {
+      position: relative;
+      overflow: hidden;
+      aspect-ratio: 16 / 10;
+      background: #e5ebe6;
+    }
+
+    .card img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      transition: transform 0.6s cubic-bezier(0.25, 0.8, 0.25, 1);
+    }
+
+    .card:hover .card-img-wrapper img {
+      transform: scale(1.08);
+    }
+
+    .card-body {
+      padding: 24px;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .card-body p {
+      margin: 0;
+      font-size: 14px;
+      color: var(--text-muted);
+      line-height: 1.6;
+    }
+
+    .tag {
+      display: inline-flex;
+      align-items: center;
+      align-self: flex-start;
+      padding: 3px 12px;
+      border-radius: 999px;
+      background: var(--primary-light);
+      color: var(--primary);
+      font-size: 12px;
+      font-weight: 700;
+      margin-bottom: 12px;
+      letter-spacing: 1px;
+    }
+
+    /* 线路时间轴改造 */
+    .route {
+      display: flex;
+      flex-direction: column;
+      gap: 30px;
+    }
+
+    .day {
+      display: grid;
+      grid-template-columns: 200px 1fr;
+      gap: 0;
+      background: var(--bg-card);
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: var(--shadow-md);
+      transition: var(--transition);
+    }
+    .day:hover {
+      box-shadow: var(--shadow-lg);
+      border-color: rgba(45, 106, 79, 0.15);
+    }
+
+    .date-block {
+      padding: 30px;
+      color: #fff;
+      background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      position: relative;
+    }
+
+    .date-block::after {
+      content: "";
+      position: absolute;
+      top: 0;
+      right: -10px;
+      bottom: 0;
+      width: 20px;
+      background: radial-gradient(circle at 10px center, var(--bg-card) 8px, transparent 8px);
+      background-size: 20px 20px;
+      z-index: 10;
+    }
+
+    .date-block .date {
+      font-size: 38px;
+      line-height: 1;
+      font-weight: 800;
+      font-family: var(--font-serif);
+      letter-spacing: -1px;
+    }
+
+    .date-block .weekday {
+      margin-top: 10px;
+      color: rgba(255,255,255,0.85);
+      font-size: 14px;
+      font-weight: 500;
+      letter-spacing: 1px;
+    }
+
+    .date-block .day-num {
+      font-family: var(--font-serif);
+      font-size: 64px;
+      font-weight: 900;
+      line-height: 0.8;
+      opacity: 0.15;
+      text-align: right;
+      margin-top: auto;
+    }
+
+    .day-content {
+      padding: 30px 40px;
+    }
+
+    .day-top {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      flex-wrap: wrap;
+      margin-bottom: 20px;
+      border-bottom: 1px solid var(--line);
+      padding-bottom: 15px;
+    }
+
+    .day-top h3 {
+      font-size: 24px;
+      margin: 0;
+      flex: 1;
+      min-width: 250px;
+    }
+
+    .day-top .tag {
+      margin-bottom: 0;
+      background: rgba(35, 92, 125, 0.1);
+      color: var(--secondary);
+    }
+
+    /* 行程画廊 */
+    .day-gallery {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 16px;
+      margin: 20px 0 24px;
+    }
+
+    .day-gallery figure {
+      margin: 0;
+      overflow: hidden;
+      border-radius: 12px;
+      border: 1px solid var(--line);
+      background: #eef1ed;
+      position: relative;
+      cursor: pointer;
+      aspect-ratio: 16 / 10;
+    }
+
+    .day-gallery img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      transition: transform 0.6s cubic-bezier(0.25, 0.8, 0.25, 1);
+    }
+
+    .day-gallery figure:hover img {
+      transform: scale(1.08);
+    }
+
+    .day-gallery figcaption {
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      padding: 30px 15px 12px;
+      color: #fff;
+      font-size: 14px;
+      font-weight: 700;
+      background: linear-gradient(180deg, transparent 0%, rgba(0,0,0,0.85) 100%);
+      text-shadow: 0 1px 3px rgba(0,0,0,0.5);
+      letter-spacing: 1px;
+    }
+
+    /* 每日路线地图 */
+    .route-map-panel {
+      margin: 0 0 26px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      overflow: hidden;
+      background: var(--bg-card);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .route-map-head {
+      min-height: 52px;
+      padding: 10px 14px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      border-bottom: 1px solid var(--line);
+      background: #f6f8f6;
+    }
+
+    .route-map-title {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      min-width: 0;
+      font-size: 15px;
+      font-weight: 800;
+      color: var(--text-main);
+    }
+
+    .route-map-title svg {
+      flex: 0 0 auto;
+      color: var(--primary);
+    }
+
+    .route-map-link {
+      flex: 0 0 auto;
+      padding: 5px 9px;
+      border: 1px solid rgba(35, 92, 125, 0.25);
+      border-radius: 5px;
+      background: #fff;
+      font-size: 12px;
+      font-weight: 700;
+      line-height: 1.4;
+    }
+
+    .route-map {
+      width: 100%;
+      height: 310px;
+      background: #e9eeea;
+    }
+
+    .route-map-fallback {
+      display: none;
+      min-height: 180px;
+      padding: 20px;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      color: var(--text-muted);
+      background: #eef1ed;
+    }
+
+    .route-stops {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px 12px;
+      margin: 0;
+      padding: 12px 14px;
+      list-style: none;
+      border-top: 1px solid var(--line);
+      background: #fff;
+    }
+
+    .route-stops li {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      color: var(--text-muted);
+      font-size: 12px;
+      line-height: 1.5;
+    }
+
+    .route-stop-num,
+    .route-marker {
+      display: inline-grid;
+      place-items: center;
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      background: var(--primary);
+      color: #fff;
+      border: 2px solid #fff;
+      box-shadow: 0 2px 7px rgba(29, 43, 37, 0.28);
+      font: 800 11px/1 var(--font-sans);
+    }
+
+    .route-marker {
+      width: 28px;
+      height: 28px;
+      border-width: 3px;
+      font-size: 12px;
+    }
+
+    .route-map-note {
+      padding: 0 14px 12px;
+      color: var(--text-muted);
+      font-size: 11px;
+      line-height: 1.55;
+      background: #fff;
+    }
+
+    .leaflet-container {
+      font-family: var(--font-sans);
+    }
+
+    .leaflet-popup-content {
+      margin: 10px 12px;
+      line-height: 1.55;
+    }
+
+    .leaflet-popup-content strong {
+      color: var(--primary);
+    }
+
+    /* 时程轨线(高精细轨道设计) */
+    .time-list {
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      margin: 24px 0;
+      padding-left: 24px;
+    }
+
+    .time-list::before {
+      content: "";
+      position: absolute;
+      top: 10px;
+      bottom: 10px;
+      left: 6px;
+      width: 2px;
+      background: linear-gradient(180deg, var(--primary-light) 0%, var(--primary) 50%, var(--secondary) 100%);
+    }
+
+    .slot {
+      display: grid;
+      grid-template-columns: 80px 1fr;
+      gap: 20px;
+      align-items: start;
+      padding-bottom: 24px;
+      position: relative;
+    }
+
+    .slot:last-child {
+      padding-bottom: 0;
+    }
+
+    .slot::after {
+      content: "";
+      position: absolute;
+      left: -22px;
+      top: 6px;
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: #fff;
+      border: 2px solid var(--primary);
+      box-shadow: 0 0 0 4px rgba(45, 106, 79, 0.15);
+      transition: var(--transition);
+    }
+    .slot:hover::after {
+      background: var(--accent-gold);
+      border-color: var(--accent-gold);
+      box-shadow: 0 0 0 6px rgba(184, 138, 68, 0.25);
+      transform: scale(1.2);
+    }
+
+    .slot time {
+      font-weight: 800;
+      color: var(--accent-red);
+      font-size: 16px;
+      line-height: 1.3;
+      letter-spacing: 0.5px;
+    }
+
+    .slot-desc {
+      font-size: 15px;
+      color: var(--text-main);
+      line-height: 1.6;
+    }
+
+    .stay-note {
+      display: grid;
+      grid-template-columns: 120px 1fr;
+      gap: 12px;
+      align-items: start;
+      margin: 14px 0 18px;
+      padding: 14px 16px;
+      border: 1px solid rgba(45, 106, 79, 0.22);
+      border-radius: 10px;
+      background: #eef6f1;
+      color: var(--text-muted);
+      font-size: 14px;
+      line-height: 1.55;
+    }
+
+    .stay-note b {
+      color: var(--primary);
+      font-size: 13px;
+      letter-spacing: 0;
+    }
+
+    /* 每日小贴士 */
+    .tips {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 16px;
+      margin-top: 24px;
+    }
+
+    .tip {
+      padding: 16px 20px;
+      border-radius: 12px;
+      background: #f1f6f3;
+      border: 1px solid #dfe6e2;
+      color: var(--text-muted);
+      font-size: 14px;
+      line-height: 1.5;
+      display: flex;
+      gap: 12px;
+      align-items: start;
+    }
+
+    .tip::before {
+      content: "💡";
+      font-size: 16px;
+    }
+
+    /* 左右分栏面板 */
+    .split {
+      display: grid;
+      grid-template-columns: 1.1fr 0.9fr;
+      gap: 24px;
+      align-items: start;
+    }
+
+    .panel {
+      padding: 30px;
+      background: var(--bg-card);
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      box-shadow: var(--shadow-md);
+      transition: var(--transition);
+    }
+    .panel:hover {
+      box-shadow: var(--shadow-lg);
+      border-color: rgba(45, 106, 79, 0.1);
+    }
+
+    .panel h3 {
+      border-bottom: 2px solid var(--primary-light);
+      padding-bottom: 12px;
+      margin-bottom: 18px;
+      color: var(--primary);
+    }
+
+    .compact-list {
+      margin: 0;
+      padding-left: 20px;
+      color: var(--text-main);
+    }
+
+    .compact-list li { 
+      margin: 12px 0; 
+      line-height: 1.6;
+    }
+    .compact-list li b {
+      color: #1a2521;
+    }
+
+    /* 美丽精细表格 */
+    .table-wrapper {
+      border-radius: 16px;
+      overflow: hidden;
+      border: 1px solid var(--line);
+      box-shadow: var(--shadow-md);
+      background: var(--bg-card);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: left;
+    }
+
+    th, td {
+      padding: 16px 20px;
+      border-bottom: 1px solid var(--line);
+      vertical-align: top;
+    }
+
+    th {
+      background: #eaf1ed;
+      color: var(--primary);
+      font-size: 15px;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+    }
+
+    tr:last-child td { border-bottom: 0; }
+    
+    tr:hover td {
+      background: rgba(45, 106, 79, 0.02);
+    }
+
+    /* 预算方块 */
+    .money {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+
+    .money-card {
+      padding: 24px 20px;
+      background: var(--bg-card);
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      box-shadow: var(--shadow-md);
+      text-align: center;
+      transition: var(--transition);
+    }
+    .money-card:hover {
+      transform: translateY(-5px);
+      box-shadow: var(--shadow-lg);
+      border-color: var(--accent-gold);
+    }
+
+    .money-card strong {
+      display: block;
+      font-size: 26px;
+      color: var(--accent-red);
+      font-family: var(--font-serif);
+      margin-bottom: 8px;
+    }
+
+    .money-card span {
+      font-size: 14px;
+      color: var(--text-muted);
+      line-height: 1.5;
+    }
+
+    /* 新增：智能预算计算器面板 */
+    .calculator-panel {
+      background: linear-gradient(145deg, #ffffff 0%, #fafbfb 100%);
+      border: 2px solid var(--accent-gold);
+      border-radius: 20px;
+      padding: 35px;
+      box-shadow: var(--shadow-lg);
+      margin-top: 30px;
+    }
+
+    .calc-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid var(--line);
+      padding-bottom: 15px;
+      margin-bottom: 25px;
+    }
+
+    .calc-header h3 {
+      font-size: 22px;
+      color: var(--accent-gold);
+      margin: 0;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .calc-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 30px;
+    }
+
+    @media (max-width: 768px) {
+      .calc-grid { grid-template-columns: 1fr; }
+    }
+
+    .calc-group {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .calc-label {
+      font-weight: 700;
+      font-size: 15px;
+      color: var(--text-main);
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .calc-label span {
+      color: var(--primary);
+    }
+
+    .calc-slider {
+      -webkit-appearance: none;
+      width: 100%;
+      height: 6px;
+      border-radius: 3px;
+      background: var(--line);
+      outline: none;
+    }
+
+    .calc-slider::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background: var(--primary);
+      cursor: pointer;
+      transition: var(--transition);
+    }
+
+    .calc-slider::-webkit-slider-thumb:hover {
+      transform: scale(1.2);
+    }
+
+    .calc-select {
+      padding: 12px;
+      border-radius: 10px;
+      border: 1px solid var(--line);
+      font-family: var(--font-sans);
+      font-size: 14px;
+      color: var(--text-main);
+      background-color: white;
+      outline: none;
+      cursor: pointer;
+      transition: var(--transition);
+    }
+
+    .calc-select:focus {
+      border-color: var(--primary);
+    }
+
+    .checkbox-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      cursor: pointer;
+      font-size: 14px;
+      color: var(--text-main);
+    }
+
+    .checkbox-item input[type="checkbox"] {
+      width: 18px;
+      height: 18px;
+      accent-color: var(--primary);
+      cursor: pointer;
+    }
+
+    .calc-results {
+      background: #f3f7f5;
+      border-radius: 16px;
+      padding: 25px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .result-row {
+      display: flex;
+      justify-content: space-between;
+      padding: 10px 0;
+      border-bottom: 1px dashed var(--line);
+      font-size: 14px;
+      color: var(--text-muted);
+    }
+    .result-row:last-of-type {
+      border-bottom: none;
+    }
+
+    .result-row strong {
+      color: var(--text-main);
+    }
+
+    .grand-total {
+      text-align: center;
+      padding-top: 15px;
+      margin-top: 15px;
+      border-top: 2px solid var(--primary-light);
+    }
+
+    .total-num {
+      font-size: 38px;
+      font-family: var(--font-serif);
+      color: var(--accent-red);
+      font-weight: 800;
+      margin: 5px 0;
+    }
+
+    .per-capita {
+      font-size: 14px;
+      color: var(--primary);
+      font-weight: 600;
+    }
+
+    /* 动态柱状图 */
+    .budget-chart {
+      margin-top: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .chart-bar-wrapper {
+      display: grid;
+      grid-template-columns: 70px 1fr;
+      align-items: center;
+      gap: 10px;
+      font-size: 12px;
+    }
+
+    .chart-bar-bg {
+      height: 12px;
+      background: var(--line);
+      border-radius: 6px;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .chart-bar-fill {
+      height: 100%;
+      border-radius: 6px;
+      width: 0%;
+      transition: width 0.5s cubic-bezier(0.25, 0.8, 0.25, 1);
+    }
+
+    .fill-hotel { background: var(--secondary); }
+    .fill-dining { background: var(--accent-red); }
+    .fill-transport { background: var(--accent-gold); }
+    .fill-activity { background: var(--primary); }
+
+    /* 新增：行前准备互动清单 */
+    .checklist-card {
+      background: var(--bg-card);
+      border: 1px solid var(--line);
+      border-radius: 20px;
+      padding: 30px;
+      box-shadow: var(--shadow-md);
+      margin-bottom: 40px;
+    }
+
+    .checklist-progress-container {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 25px;
+      padding-bottom: 15px;
+      border-bottom: 1px dashed var(--line);
+    }
+
+    .checklist-progress-text {
+      font-weight: 700;
+      font-size: 16px;
+      color: var(--primary);
+    }
+
+    .checklist-progress-bar-bg {
+      flex: 1;
+      height: 10px;
+      background: var(--line);
+      border-radius: 5px;
+      margin: 0 20px;
+      overflow: hidden;
+    }
+
+    .checklist-progress-bar-fill {
+      height: 100%;
+      background: linear-gradient(to right, var(--primary-light), var(--primary));
+      width: 0%;
+      transition: width 0.4s ease;
+    }
+
+    .checklist-tabs {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 20px;
+      overflow-x: auto;
+      padding-bottom: 5px;
+    }
+
+    .checklist-tab {
+      padding: 8px 16px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #f7faf8;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--text-muted);
+      transition: var(--transition);
+      white-space: nowrap;
+    }
+
+    .checklist-tab.active {
+      background: var(--primary);
+      color: white;
+      border-color: var(--primary);
+    }
+
+    .checklist-content {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .checklist-item {
+      display: flex;
+      align-items: start;
+      gap: 12px;
+      padding: 12px 16px;
+      border-radius: 10px;
+      background: #f8faf9;
+      border: 1px solid transparent;
+      cursor: pointer;
+      transition: var(--transition);
+    }
+
+    .checklist-item:hover {
+      background: #f1f6f3;
+      border-color: var(--primary-light);
+    }
+
+    .checklist-item.checked {
+      background: #f4faf6;
+    }
+
+    .checklist-item.checked span {
+      text-decoration: line-through;
+      color: var(--text-muted);
+    }
+
+    .checklist-item input[type="checkbox"] {
+      width: 20px;
+      height: 20px;
+      accent-color: var(--primary);
+      margin-top: 2px;
+      cursor: pointer;
+    }
+
+    .checklist-item-title {
+      font-weight: 700;
+      color: var(--text-main);
+      font-size: 15px;
+      display: block;
+      margin-bottom: 4px;
+    }
+
+    .checklist-item-desc {
+      font-size: 13px;
+      color: var(--text-muted);
+      display: block;
+    }
+
+    /* 资料来源列表 */
+    .source-list {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+      font-size: 14px;
+    }
+
+    .source-list a {
+      background: #f3f7f5;
+      padding: 12px 16px;
+      border-radius: 10px;
+      border: 1px solid var(--line);
+      color: var(--text-main);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      transition: var(--transition);
+    }
+
+    .source-list a:hover {
+      background: var(--primary-light);
+      border-color: var(--primary);
+      color: var(--primary);
+      transform: translateX(4px);
+    }
+
+    .source-list a::after {
+      content: "↗";
+      font-weight: bold;
+      color: var(--primary);
+    }
+
+    footer {
+      width: min(1200px, calc(100% - 40px));
+      margin: 40px auto;
+      padding: 30px 0;
+      border-top: 1px solid var(--line);
+      color: var(--text-muted);
+      font-size: 13px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 15px;
+    }
+
+    /* 浮动辅助小工具 */
+    .floating-tools {
+      position: fixed;
+      bottom: 30px;
+      right: 30px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      z-index: 100;
+    }
+
+    .float-btn {
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      background: var(--bg-card);
+      border: 1px solid var(--line);
+      box-shadow: var(--shadow-md);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: var(--transition);
+      font-size: 20px;
+      color: var(--text-main);
+    }
+    .float-btn:hover {
+      transform: translateY(-4px);
+      box-shadow: var(--shadow-lg);
+      background: var(--primary-light);
+      color: var(--primary);
+      border-color: var(--primary);
+    }
+
+    .float-btn.back-to-top {
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .float-btn.back-to-top.show {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .menu-toggle {
+      display: none;
+    }
+
+    /* 全局图片浏览器 (Lightbox) */
+    .lightbox {
+      position: fixed;
+      inset: 0;
+      background: rgba(14, 21, 18, 0.95);
+      backdrop-filter: blur(8px);
+      z-index: 2000;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.35s ease;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 40px;
+    }
+
+    .lightbox.show {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .lightbox-content {
+      position: relative;
+      max-width: min(1000px, 90vw);
+      max-height: 80vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .lightbox img {
+      max-width: 100%;
+      max-height: 80vh;
+      object-fit: contain;
+      border-radius: 12px;
+      box-shadow: 0 25px 60px rgba(0,0,0,0.5);
+      transform: scale(0.95);
+      transition: transform 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+    }
+
+    .lightbox.show img {
+      transform: scale(1);
+    }
+
+    .lightbox-caption {
+      margin-top: 20px;
+      color: white;
+      font-size: 16px;
+      font-weight: 500;
+      text-align: center;
+      text-shadow: 0 2px 8px rgba(0,0,0,0.5);
+      font-family: var(--font-serif);
+      letter-spacing: 1px;
+    }
+
+    .lightbox-close {
+      position: absolute;
+      top: 30px;
+      right: 30px;
+      background: none;
+      border: none;
+      color: white;
+      font-size: 40px;
+      cursor: pointer;
+      transition: var(--transition);
+      opacity: 0.7;
+    }
+    .lightbox-close:hover {
+      opacity: 1;
+      transform: rotate(90deg);
+    }
+
+    .lightbox-btn {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      background: rgba(255,255,255,0.1);
+      border: 1px solid rgba(255,255,255,0.2);
+      color: white;
+      font-size: 24px;
+      width: 54px;
+      height: 54px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: var(--transition);
+      backdrop-filter: blur(10px);
+    }
+    .lightbox-btn:hover {
+      background: rgba(255,255,255,0.25);
+      border-color: white;
+      transform: translateY(-50%) scale(1.1);
+    }
+
+    .lightbox-prev { left: 40px; }
+    .lightbox-next { right: 40px; }
+
+
+    /* 渐变加载动画 */
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(24px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    /* 移动端响应式极致适配 */
+    @media (max-width: 1200px) {
+      .container {
+        grid-template-columns: 1fr;
+      }
+      aside {
+        display: none; /* 宽屏侧边栏在手机端隐藏 */
+      }
+      .menu-toggle {
+        display: flex; /* 显示浮动菜单按钮 */
+      }
+
+      /* 移动端浮动侧栏菜单 */
+      .mobile-sidebar {
+        position: fixed;
+        right: -300px;
+        top: 0;
+        bottom: 0;
+        width: 280px;
+        background: rgba(250, 249, 245, 0.98);
+        backdrop-filter: blur(15px);
+        box-shadow: -10px 0 30px rgba(0,0,0,0.1);
+        z-index: 1500;
+        display: flex;
+        flex-direction: column;
+        padding: 40px 20px;
+        transition: var(--transition);
+      }
+
+      .mobile-sidebar.show {
+        right: 0;
+      }
+
+      .mobile-sidebar .nav-menu {
+        max-height: none;
+      }
+
+      .mobile-sidebar .nav-link {
+        border-radius: 8px;
+        margin: 4px 0;
+      }
+
+      .mobile-overlay {
+        position: fixed;
+        inset: 0;
+        background: rgba(0,0,0,0.5);
+        z-index: 1400;
+        opacity: 0;
+        pointer-events: none;
+        transition: var(--transition);
+      }
+      .mobile-overlay.show {
+        opacity: 1;
+        pointer-events: auto;
+      }
+    }
+
+    @media (max-width: 860px) {
+      .hero { min-height: 75vh; }
+      .hero-stats {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+      .grid {
+        grid-template-columns: 1fr;
+      }
+      .day {
+        grid-template-columns: 1fr;
+      }
+      .date-block {
+        flex-direction: row;
+        align-items: center;
+        padding: 24px 30px;
+      }
+      .date-block::after {
+        top: auto;
+        left: 0;
+        right: 0;
+        bottom: -10px;
+        width: 100%;
+        height: 20px;
+        background: radial-gradient(circle at center 10px, var(--bg-card) 8px, transparent 8px);
+        background-size: 20px 20px;
+      }
+      .date-block .day-num {
+        margin-top: 0;
+        font-size: 44px;
+      }
+      .day-content {
+        padding: 24px 20px;
+      }
+      .day-gallery {
+        grid-template-columns: 1fr;
+      }
+      .route-map {
+        height: 260px;
+      }
+      .route-map-head {
+        align-items: flex-start;
+      }
+      .route-map-title {
+        font-size: 14px;
+      }
+      .stay-note {
+        grid-template-columns: 1fr;
+      }
+      .tips, .split, .money, .source-list {
+        grid-template-columns: 1fr;
+      }
+      .slot {
+        grid-template-columns: 70px 1fr;
+      }
+      .table-wrapper {
+        overflow-x: auto;
+      }
+      table {
+        min-width: 500px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- 滚动进度指示器 -->
+  <div class="scroll-progress" id="progressBar"></div>
+
+  <!-- 主 Hero Banner 区域 -->
+  <header class="hero">
+    <div class="hero-inner">
+      <div class="eyebrow">2026.06.25 - 06.30 呼和浩特自由行</div>
+      <h1>青城、草原、火山与沙漠的 6 天 5 晚</h1>
+      <p>按你 6 月 25 日 11:30 抵达、6 月 30 日 19:30 返程来排：落地下午去博物馆，中段去红石崖、敕勒川、辉腾锡勒和乌兰哈达并住一晚火山蒙古包、参加篝火晚会，后段留给库布齐沙漠和购物逛街。</p>
+      
+      <div class="hero-stats">
+        <div class="stat">
+          <strong>11:30 抵达</strong>
+          <span>6月25日 呼和浩特白塔机场</span>
+        </div>
+        <div class="stat">
+          <strong>19:30 返程</strong>
+          <span>6月30日 从白塔机场飞长沙</span>
+        </div>
+        <div class="stat">
+          <strong>25-28℃</strong>
+          <span>白天舒适，午后局部有雨</span>
+        </div>
+        <div class="stat">
+          <strong>市区+草原+火山</strong>
+          <span>博物馆、红石崖、蒙古包、沙漠</span>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- 全局布局层 -->
+  <div class="container">
+    <!-- 桌面级固定侧边栏 (Scrollspy 目录结构) -->
+    <aside>
+      <div>
+        <div class="brand">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 22h20L12 2z"/></svg>
+          青城旅行攻略
+        </div>
+        <ul class="nav-menu">
+          <li><a href="#conclusion" class="nav-link active">1. 先说结论</a></li>
+          <li><a href="#preparation" class="nav-link">2. 行前准备</a></li>
+          <li><a href="#itinerary" class="nav-link">3. 详细行程</a></li>
+          <li><a href="#day-1" class="nav-link nav-link-sub">Day 1: 落地博物馆</a></li>
+          <li><a href="#day-2" class="nav-link nav-link-sub">Day 2: 红石崖+敕勒川</a></li>
+          <li><a href="#day-3" class="nav-link nav-link-sub">Day 3: 火山+蒙古包</a></li>
+          <li><a href="#day-4" class="nav-link nav-link-sub">Day 4: 下午回呼市</a></li>
+          <li><a href="#day-5" class="nav-link nav-link-sub">Day 5: 沙漠冒险</a></li>
+          <li><a href="#day-6" class="nav-link nav-link-sub">Day 6: 购物返程</a></li>
+          <li><a href="#rail-options" class="nav-link">4. 周边说明</a></li>
+          <li><a href="#spots" class="nav-link">5. 必看景点</a></li>
+          <li><a href="#tips-hotel" class="nav-link">6. 交通与住宿</a></li>
+          <li><a href="#budget" class="nav-link">7. 预算参考</a></li>
+          <li><a href="#food" class="nav-link">8. 美食清单</a></li>
+          <li><a href="#rules" class="nav-link">9. 风险与闭馆</a></li>
+          <li><a href="#sources" class="nav-link">10. 资料来源</a></li>
+        </ul>
+      </div>
+    </aside>
+
+    <!-- 主阅读区域 -->
+    <main>
+      <!-- 先说结论 -->
+      <section id="conclusion">
+        <h2>先说结论</h2>
+        <p class="lead">这条路线按你的最终节奏来：落地下午直接去内蒙古博物馆，第二天敕勒川高山草原+红石崖，第三天辉腾锡勒+乌兰哈达并住火山蒙古包、参加篝火晚会，第四天下午回呼市，第五天响沙湾/库布齐，第六天购物逛街再去机场。</p>
+        
+        <div class="notice">
+          <div class="notice-icon">⛈️</div>
+          <div>
+            <b>天气策略</b>
+            按6月24日12:00前后发布的预报：6月26日呼市及周边多云，6月27日至28日乌兰察布有小雨可能，6月29日鄂尔多斯目前偏晴。27日骑马、火山拍照和篝火晚会都要服从现场天气与防火要求；有雷电时立即取消高处停留和骑马。
+          </div>
+        </div>
+      </section>
+
+      <!-- 行前准备 & 互动清单 -->
+      <section id="preparation">
+        <h2>行前准备</h2>
+        <p class="lead">出发前的准备，是让旅程无忧的第一步。我们在卡片下方为您集成了<b>互动式备忘清单</b>，所有打勾状态会自动为您存在手机或电脑中，方便随时核对。</p>
+        
+        <div class="grid" style="margin-bottom: 30px;">
+          <article class="card">
+            <div class="card-img-wrapper">
+              <img src="https://commons.wikimedia.org/wiki/Special:FilePath/Exterior%20of%20Bayan%20%28Airport%29%20Station%2C%20Hohhot%20Metro.jpg" alt="呼和浩特机场地铁站" class="clickable-img">
+            </div>
+            <div class="card-body">
+              <span class="tag">交通</span>
+              <h3>机场进城</h3>
+              <p>白塔机场可接地铁1号线，或打车进市区。若住新华广场/中山路，打车通常更省心；若行李少，可地铁到新华广场再短途打车。</p>
+            </div>
+          </article>
+
+          <article class="card">
+            <div class="card-img-wrapper">
+              <img src="https://commons.wikimedia.org/wiki/Special:FilePath/Inner%20Mongolia%20Museum%202017%20A.jpg" alt="内蒙古博物院" class="clickable-img">
+            </div>
+            <div class="card-body">
+              <span class="tag">预约</span>
+              <h3>博物馆别卡点</h3>
+              <p>内蒙古博物院需提前预约，开放时间通常为9:00-17:00，16:00停止入馆，周一闭馆。6月29日是周一，所以主参观安排在抵达日6月25日下午。</p>
+            </div>
+          </article>
+
+          <article class="card">
+            <div class="card-img-wrapper">
+              <img src="https://commons.wikimedia.org/wiki/Special:FilePath/Huitengxile%20wind%20farm%20873472543.jpg" alt="辉腾锡勒草原风电" class="clickable-img">
+            </div>
+            <div class="card-body">
+              <span class="tag">装备</span>
+              <h3>草原昼夜温差</h3>
+              <p>带防晒、帽子、薄外套、雨衣或冲锋衣。草原、火山和沙漠风都大，昼夜温差明显，鞋子以防滑、防沙、好走为先。</p>
+            </div>
+          </article>
+        </div>
+
+        <!-- 交互清单组件 -->
+        <div class="checklist-card">
+          <div class="checklist-progress-container">
+            <div class="checklist-progress-text">行前准备清单 (已完成 <span id="progressPercent">0%</span>)</div>
+            <div class="checklist-progress-bar-bg">
+              <div class="checklist-progress-bar-fill" id="progressBarFill"></div>
+            </div>
+            <button id="resetChecklistBtn" style="border: none; background: transparent; cursor: pointer; color: var(--accent-red); font-size: 13px; font-weight: 700;">重置</button>
+          </div>
+
+          <div class="checklist-tabs">
+            <div class="checklist-tab active" data-tab="all">全部物品</div>
+            <div class="checklist-tab" data-tab="docs">证件预订</div>
+            <div class="checklist-tab" data-tab="clothes">防晒服饰</div>
+            <div class="checklist-tab" data-tab="gadgets">电子药品</div>
+          </div>
+
+          <div class="checklist-content" id="checklistItems">
+            <!-- JS 自动生成列表，保证 LocalStorage 存储 -->
+          </div>
+        </div>
+      </section>
+
+      <!-- 详细行程 -->
+      <section id="itinerary">
+        <h2>详细行程</h2>
+        <p class="lead">时间按舒适节奏估算，实际可根据你酒店位置和当天排队情况微调。点击日程内照片可放大。</p>
+        
+        <div class="route">
+          <!-- Day 1 -->
+          <article class="day" id="day-1">
+            <div class="date-block">
+              <div>
+                <div class="date">06.25</div>
+                <div class="weekday">周四 抵达+博物馆</div>
+              </div>
+              <div class="day-num">D1</div>
+            </div>
+            <div class="day-content">
+              <div class="day-top">
+                <span class="tag">落地+博物馆</span>
+                <h3>机场直达博物院、寄存行李、入住后逛塞上老街</h3>
+              </div>
+              
+              <div class="day-gallery">
+                <figure>
+                  <img loading="lazy" src="https://commons.wikimedia.org/wiki/Special:FilePath/Inner%20Mongolia%20Museum%202017%20A.jpg" alt="内蒙古博物院" class="clickable-img">
+                  <figcaption>内蒙古博物院</figcaption>
+                </figure>
+                <figure>
+                  <img loading="lazy" src="https://commons.wikimedia.org/wiki/Special:FilePath/Xilitu%20Zhao%20%2853724498277%29.jpg" alt="席力图召" class="clickable-img">
+                  <figcaption>席力图召</figcaption>
+                </figure>
+              </div>
+
+              <div class="time-list">
+                <div class="slot">
+                  <time>11:30</time>
+                  <div class="slot-desc">抵达呼和浩特白塔国际机场，取行李后直接打车去内蒙古博物院新馆，通常约20-35分钟。不要先向西去新华广场酒店，避免之后再次向东折返。</div>
+                </div>
+                <div class="slot">
+                  <time>12:30</time>
+                  <div class="slot-desc">交通：在博物院主入口台阶前的大件行李寄存处扫码存包。新馆设有中小格和特大格；证件、现金、相机和充电宝随身携带。若特大柜已满，立即执行“先去酒店寄存”的备选路线。</div>
+                </div>
+                <div class="slot">
+                  <time>12:40</time>
+                  <div class="slot-desc">交通：从博物院短途打车约10-15分钟去老绥元烧麦（如意店，市政府西侧如意小区东门南侧）。午餐点羊肉大葱/沙葱烧卖、砖茶或咸奶茶，控制在40分钟内；也可直接在博物院/万达附近简餐。</div>
+                </div>
+                <div class="slot">
+                  <time>13:40</time>
+                  <div class="slot-desc">交通：短途打车返回内蒙古博物院，按已预约时段入馆。参观至16:30-16:45，优先看北疆历史、民族融合、恐龙化石和航天展；16:00后停止入馆，不要把午餐拖长。</div>
+                </div>
+                <div class="slot">
+                  <time>16:45</time>
+                  <div class="slot-desc">交通：取行李后打车向西到新华广场 / 中山路酒店，约25-40分钟。17:30左右办理入住并休息，不再从酒店折返博物院。</div>
+                </div>
+                <div class="slot">
+                  <time>18:40</time>
+                  <div class="slot-desc">交通：从酒店打车约15-25分钟到塞上老街 / 大召广场。先逛老街和大盛魁街区，再吃羊杂、焙子、羊肉串或奶豆腐饼；烧卖和咸奶茶中午已经吃过，晚上可换一种口味。</div>
+                </div>
+                <div class="slot">
+                  <time>21:00</time>
+                  <div class="slot-desc">交通：从老城打车回新华广场 / 中山路酒店，约15-25分钟。早点休息；第二天上午在市区轻松参观，下午15:00左右才由红石崖小团上门接。</div>
+                </div>
+              </div>
+
+              <div class="stay-note">
+                <b>今晚住宿</b>
+                <span>建议住新华广场 / 中山路一带。今天利用博物院寄存柜先参观、后入住，减少机场—酒店—博物院之间的折返；后续远郊接车、6月29日新华广场集合和返程去机场也更顺。</span>
+              </div>
+
+              <div class="tips">
+                <div class="tip">核心优化是“机场 → 博物院 → 酒店 → 老城”，由东向西推进，删除原先酒店与博物院之间的往返。</div>
+                <div class="tip">大件寄存柜数量有限：落地后先看排队和柜量；若柜满，马上打车去酒店寄存，并压缩午餐，确保16:00前入馆。</div>
+              </div>
+            </div>
+          </article>
+
+          <!-- Day 2 -->
+          <article class="day" id="day-2">
+            <div class="date-block">
+              <div>
+                <div class="date">06.26</div>
+                <div class="weekday">周五 市区上午+红石崖下午</div>
+              </div>
+              <div class="day-num">D2</div>
+            </div>
+            <div class="day-content">
+              <div class="day-top">
+                <span class="tag">将军衙署/红石崖半日团</span>
+                <h3>上午市区轻逛，15:00出发敕勒川高山草原与红石崖</h3>
+              </div>
+              
+              <div class="day-gallery">
+                <figure>
+                  <img loading="lazy" src="https://commons.wikimedia.org/wiki/Special:FilePath/Huitengxile%20wind%20farm%20873472543.jpg" alt="敕勒川草原方向" class="clickable-img">
+                  <figcaption>敕勒川高山草原</figcaption>
+                </figure>
+                <figure>
+                  <img loading="lazy" src="https://commons.wikimedia.org/wiki/Special:FilePath/Huanghuogou.jpg" alt="红石崖山地草原方向" class="clickable-img">
+                  <figcaption>红石崖山地草原</figcaption>
+                </figure>
+              </div>
+
+              <div class="time-list">
+                <div class="slot">
+                  <time>08:00</time>
+                  <div class="slot-desc">交通：酒店附近步行吃早餐。今天下午才出发，不必早起赶车；可吃羊杂配焙子，或选清淡粥面，随后回酒店拿相机和薄外套。</div>
+                </div>
+                <div class="slot">
+                  <time>09:00</time>
+                  <div class="slot-desc">交通：从新华广场步行约15分钟，或地铁1号线至将军衙署站C口。参观绥远城将军衙署约1.5小时，了解清代绥远城历史；通常9:00开放，建议提前预约并携带身份证。</div>
+                </div>
+                <div class="slot">
+                  <time>10:45</time>
+                  <div class="slot-desc">交通：将军衙署打车约10-15分钟到青城公园，沿湖和林荫道散步约45分钟。若天气热、下雨或前一晚太累，可直接跳过公园，回酒店休息。</div>
+                </div>
+                <div class="slot">
+                  <time>12:00</time>
+                  <div class="slot-desc">交通：从青城公园步行/打车回中山路、新华广场商圈午餐。选莜面、烧卖或家常菜，不吃太撑；同时打包面包、焙子和水作为红石崖晚餐。</div>
+                </div>
+                <div class="slot">
+                  <time>13:15</time>
+                  <div class="slot-desc">交通：回酒店休息、充电和整理装备。14:40前到酒店大堂等候；司机一般会在前一晚21:00前电话联系，确认酒店、车牌和实际接车时间。</div>
+                </div>
+                <div class="slot">
+                  <time>15:00</time>
+                  <div class="slot-desc">交通：5-9座小团车在呼和浩特二环内酒店上门接，随后前往敕勒川高山草原和红石崖方向。天气、拼车顺序和交通会影响实际接车时间。</div>
+                </div>
+                <div class="slot">
+                  <time>16:30</time>
+                  <div class="slot-desc">交通：随团游览敕勒川高山草原，约1小时，重点看高山草甸、林带和开阔山景；随后乘车进入红石崖区域。</div>
+                </div>
+                <div class="slot">
+                  <time>17:30</time>
+                  <div class="slot-desc">交通：随车短停红石崖观景点，随后进入红石崖国家生态公园，约1小时。看红色岩壁、溪谷、森林和山地草甸，具体停留时间由司机统筹。</div>
+                </div>
+                <div class="slot">
+                  <time>18:30</time>
+                  <div class="slot-desc">交通：景区内车辆短驳至石崖寺旅游区，约10-20分钟。寺庙是顺路节点，可看可不看；若下午接车延误，优先删除这一站。</div>
+                </div>
+                <div class="slot">
+                  <time>19:00</time>
+                  <div class="slot-desc">交通：前往红石崖空中草原，游玩约1-1.5小时，看山谷、草场和牛羊。晚餐通常不含，途中吃自备面包、焙子和水，不等返城后再找大餐。</div>
+                </div>
+                <div class="slot">
+                  <time>20:30</time>
+                  <div class="slot-desc">交通：按司机通知集合返呼和浩特。该时间为估算，最终结束时间以商家为准；送回二环内酒店后直接休息，若饿可在酒店附近吃面或点外卖。</div>
+                </div>
+              </div>
+
+              <div class="stay-note">
+                <b>今晚住宿</b>
+                <span>继续住新华广场 / 中山路原酒店，必须确认属于商家二环内上门接送范围。下午团返城可能较晚，住原酒店不用搬行李；回房后尽快休息，6月27日约07:00又要出发。</span>
+              </div>
+
+              <div class="tips">
+                <div class="tip">预订前重点问清预计返抵呼市时间。图片产品15:00才接车却包含多个景点，若商家预计22:30后才送回，会影响27日早起，应要求缩短石崖寺停留或选择更早返程车型。</div>
+                <div class="tip">上午将军衙署是主项目，青城公园属于可删项；山地草原雷雨时不站高处拍照，空中草原是否进入服从司机和景区安排。</div>
+              </div>
+            </div>
+          </article>
+
+          <!-- Day 3 -->
+          <article class="day" id="day-3">
+            <div class="date-block">
+              <div>
+                <div class="date">06.27</div>
+                <div class="weekday">周六 辉腾锡勒+火山+蒙古包</div>
+              </div>
+              <div class="day-num">D3</div>
+            </div>
+            <div class="day-content">
+              <div class="day-top">
+                <span class="tag">草原体验/火山夜宿</span>
+                <h3>辉腾锡勒草原骑马、乌兰哈达火山、蒙古包篝火晚会</h3>
+              </div>
+              
+              <div class="day-gallery">
+                <figure>
+                  <img loading="lazy" src="https://commons.wikimedia.org/wiki/Special:FilePath/Huitengxile%20wind%20farm%20873472543.jpg" alt="辉腾锡勒草原风车" class="clickable-img">
+                  <figcaption>辉腾锡勒草原</figcaption>
+                </figure>
+                <figure>
+                  <img loading="lazy" src="https://commons.wikimedia.org/wiki/Special:FilePath/Wulanhadavolcaniccluster2019.jpg" alt="乌兰哈达火山群" class="clickable-img">
+                  <figcaption>乌兰哈达火山群</figcaption>
+                </figure>
+              </div>
+
+              <div class="time-list">
+                <div class="slot">
+                  <time>07:00</time>
+                  <div class="slot-desc">交通：包车/定制小团，呼和浩特二环内酒店上门接。由于普通一日团19:00会送回呼市，下单前明确要求“乌兰哈达火山附近蒙古包下车并次日接回”，不要订成无法中途离团的固定散拼团。</div>
+                </div>
+                <div class="slot">
+                  <time>10:00</time>
+                  <div class="slot-desc">交通：包车到辉腾锡勒草原，先游览高山草甸、风车和开阔草场约1小时。抵达后可体验下马酒、献哈达等迎宾仪式，是否赠送以所订产品为准。</div>
+                </div>
+                <div class="slot">
+                  <time>11:00</time>
+                  <div class="slot-desc">交通：草原营地内步行。自愿参加约30分钟骑马体验，提前问清路线、时长、保险和总价；必须戴头盔，不自行催马奔跑，雷雨或大风时取消。</div>
+                </div>
+                <div class="slot">
+                  <time>12:00</time>
+                  <div class="slot-desc">交通：草原营地桌餐或司机推荐餐厅。午餐可吃手把肉、炖羊肉、莜面和奶茶，通常需要自费；饭后乘车前往乌兰哈达火山。</div>
+                </div>
+                <div class="slot">
+                  <time>14:00</time>
+                  <div class="slot-desc">交通：包车抵达乌兰哈达火山地质公园，游玩约3小时。优先看3号火山与5号、6号火山的黑色火山岩地貌；宇航服拍照可自愿租赁，先问清服装卫生、时长和价格。</div>
+                </div>
+                <div class="slot">
+                  <time>17:15</time>
+                  <div class="slot-desc">交通：包车送到提前预订的火山附近蒙古包营地，不随普通一日团返回呼市。办理入住后看草原与火山落日，确认次日上午接车返呼的时间。</div>
+                </div>
+                <div class="slot">
+                  <time>19:00</time>
+                  <div class="slot-desc">交通：营地内用餐。晚餐可提前预订烤羊腿、手把肉、羊排、奶茶或家常菜；烤全羊通常适合多人且需提前预订，一个人或两个人不要硬点。</div>
+                </div>
+                <div class="slot">
+                  <time>20:30</time>
+                  <div class="slot-desc">交通：营地内步行。参加篝火晚会、唱歌跳舞或看星空；篝火通常受入住人数、天气和防火要求影响，只有营地方电话确认才算落实，页面写“可安排”不等于当天一定举办。</div>
+                </div>
+              </div>
+
+              <div class="stay-note">
+                <b>今晚住宿</b>
+                <span>今晚改住乌兰哈达火山景区附近蒙古包，避免看完火山再折返辉腾锡勒。可重点查询都蓝民宿、朵兰相遇在火山蒙古包民宿、塞北驿站（乌兰哈达火山塔拉店）等火山周边住宿；预订前必须电话确认6月27日房态、独卫热水、空调/取暖、晚餐以及当天是否举办篝火晚会。</span>
+              </div>
+
+              <div class="tips">
+                <div class="tip">这是“定制包车+单独订蒙古包”的组合，普通当日往返产品不会自动包含住宿、篝火和第二天返呼接送。</div>
+                <div class="tip">6月27日是周六，火山蒙古包可能紧张；今天就确认房态，并让营地把“篝火晚会、独立卫浴、晚餐、次日接送”写进订单或聊天记录。</div>
+              </div>
+            </div>
+          </article>
+
+          <!-- Day 4 -->
+          <article class="day" id="day-4">
+            <div class="date-block">
+              <div>
+                <div class="date">06.28</div>
+                <div class="weekday">周日 返城+艺术馆夜游</div>
+              </div>
+              <div class="day-num">D4</div>
+            </div>
+            <div class="day-content">
+              <div class="day-top">
+                <span class="tag">返城慢游</span>
+                <h3>火山蒙古包晨光、下午返城、雕塑艺术馆与如意河夜景</h3>
+              </div>
+              
+              <div class="day-gallery">
+                <figure>
+                  <img loading="lazy" src="https://commons.wikimedia.org/wiki/Special:FilePath/Wulanhadavolcaniccluster2019.jpg" alt="乌兰哈达火山群晨光" class="clickable-img">
+                  <figcaption>上午：火山蒙古包周边晨光</figcaption>
+                </figure>
+                <figure>
+                  <img loading="lazy" src="https://commons.wikimedia.org/wiki/Special:FilePath/Inner%20Mongolia%20Museum%202017%20A.jpg" alt="呼和浩特现代文化建筑" class="clickable-img">
+                  <figcaption>下午：回到呼市看现代文化建筑</figcaption>
+                </figure>
+              </div>
+
+              <div class="time-list">
+                <div class="slot">
+                  <time>06:30</time>
+                  <div class="slot-desc">交通：蒙古包营地周边步行。早起看火山草原晨光和蒙古包外景，不独自进入封闭火山区域；早餐在营地吃咸奶茶、炒米、鸡蛋、焙子或简餐。</div>
+                </div>
+                <div class="slot">
+                  <time>09:00</time>
+                  <div class="slot-desc">交通：营地接车或前一日包车续程。退房后在火山游客中心或安全观景点短停补拍，约09:30-10:00正式返呼；不要临时再加一座火山，以免挤压下午行程。</div>
+                </div>
+                <div class="slot">
+                  <time>12:00</time>
+                  <div class="slot-desc">交通：包车在乌兰察布/卓资或返程服务区停车。午餐优先吃莜面、炖菜或简餐，不要拖太久；预计14:00-14:30回到呼和浩特市区。</div>
+                </div>
+                <div class="slot">
+                  <time>14:30</time>
+                  <div class="slot-desc">交通：包车送回呼和浩特市区酒店。办理入住或取回寄存行李，洗澡休息约1小时，并整理第二天沙漠日需要的防晒、湿巾和饮用水。</div>
+                </div>
+                <div class="slot">
+                  <time>16:00</time>
+                  <div class="slot-desc">交通：从新华广场/中山路打车约25-35分钟，到呼和浩特雕塑艺术馆（机场高速路北辅路）。周日通常开放至18:30，建议参观至18:00；馆内外建筑和雕塑都适合拍照，出发前在官方渠道确认预约与当日开放状态。</div>
+                </div>
+                <div class="slot">
+                  <time>18:15</time>
+                  <div class="slot-desc">交通：艺术馆打车约15-25分钟。晚餐去泽成冰煮羊（三分店），地址为赛罕区大学东街巨海城一区北门旁。点冰煮羊、蒙古烤包子、酸奶饼；饭点可能排队，建议当天电话确认晚市营业并提前取号。</div>
+                </div>
+                <div class="slot">
+                  <time>20:00</time>
+                  <div class="slot-desc">交通：餐厅打车约15-20分钟到如意广场 / 如意河音乐广场。沿河步行约60-75分钟，看东部城区夜景；音乐喷泉并非每天固定开放，不把喷泉作为必看项目。</div>
+                </div>
+                <div class="slot">
+                  <time>21:20</time>
+                  <div class="slot-desc">交通：从如意广场打车回酒店，约20-30分钟。途中或酒店附近便利店补齐第二天沙漠日的水、纸巾、防晒和简单零食，尽量22:00前休息。</div>
+                </div>
+              </div>
+
+              <div class="stay-note">
+                <b>今晚住宿</b>
+                <span>今晚回呼和浩特市区住原酒店。建议继续住新华广场 / 中山路一带，返城先洗澡休息，再打车去东部城区，晚上结束后直接打车回酒店。</span>
+              </div>
+
+              <div class="tips">
+                <div class="tip">若返城晚于16:00，直接删掉雕塑艺术馆：先休息，18:30吃冰煮羊，20:00去如意河即可。</div>
+                <div class="tip">若下雨或很累，晚饭后改去万达广场室内逛街，再打车回酒店；不要为了赶点压缩休息。</div>
+              </div>
+            </div>
+          </article>
+
+          <!-- Day 5 -->
+          <article class="day" id="day-5">
+            <div class="date-block">
+              <div>
+                <div class="date">06.29</div>
+                <div class="weekday">周一 沙漠日</div>
+              </div>
+              <div class="day-num">D5</div>
+            </div>
+            <div class="day-content">
+              <div class="day-top">
+                <span class="tag">新华广场集合/响沙湾</span>
+                <h3>新华广场往返响沙湾，晚上塞上老街收尾</h3>
+              </div>
+              
+              <div class="day-gallery">
+                <figure>
+                  <img loading="lazy" src="https://commons.wikimedia.org/wiki/Special:FilePath/Desert%20vehicle%20Xiangshawan.jpg" alt="响沙湾沙漠车" class="clickable-img">
+                  <figcaption>响沙湾</figcaption>
+                </figure>
+                <figure>
+                  <img loading="lazy" src="https://commons.wikimedia.org/wiki/Special:FilePath/Desert%20-%20Inner%20Mongolia%20edit.jpg" alt="内蒙古沙漠景观" class="clickable-img">
+                  <figcaption>库布齐沙漠</figcaption>
+                </figure>
+              </div>
+
+              <div class="time-list">
+                <div class="slot">
+                  <time>06:30</time>
+                  <div class="slot-desc">交通：从酒店步行或打车到新华广场集合点。提前吃早餐或打包烧卖、焙子和水；导游通常会在前一晚18:00-20:00通过短信或电话确认车牌、联系人和准确上车位置。</div>
+                </div>
+                <div class="slot">
+                  <time>07:10</time>
+                  <div class="slot-desc">交通：在新华广场西侧或旅行社指定位置集合，乘5座商务车/小团车出发。建议至少提前15分钟抵达；旺季可能提前发车，迟到通常无法等待。</div>
+                </div>
+                <div class="slot">
+                  <time>09:40</time>
+                  <div class="slot-desc">交通：抵达响沙湾景区，乘往返索道进入沙漠，预计游玩约6小时。按所购套票选择仙沙岛或悦沙岛；骑骆驼、沙漠车、滑沙和演出项目以当天开放情况为准。</div>
+                </div>
+                <div class="slot">
+                  <time>12:00</time>
+                  <div class="slot-desc">交通：景区内步行或摆渡。午餐在响沙湾港或岛内餐饮点自理，价格通常高于市区；可自带面包、能量棒和水，但不要携带过重食物穿越沙丘。</div>
+                </div>
+                <div class="slot">
+                  <time>16:15</time>
+                  <div class="slot-desc">交通：提前返回索道出口和停车区，预留洗沙、取物及排队时间。不要卡着16:30才从岛内项目出发。</div>
+                </div>
+                <div class="slot">
+                  <time>16:30</time>
+                  <div class="slot-desc">交通：在景区指定集合点乘团车返呼和浩特。淡季可能略提前，旺季和节假日可能延迟，返程时间以导游现场通知为准。</div>
+                </div>
+                <div class="slot">
+                  <time>19:30</time>
+                  <div class="slot-desc">交通：正常约19:20-19:40在新华广场散团，具体以路况为准。下车后打车约15-25分钟前往塞上老街；若返程晚于20:15，直接回酒店休息。</div>
+                </div>
+                <div class="slot">
+                  <time>20:00</time>
+                  <div class="slot-desc">交通：塞上老街、大召广场一带步行约1小时。晚餐可去三和元非遗冰煮羊（塞上老街店），或吃烧卖、焙子、羊杂和奶豆腐饼；吃完打车回酒店。</div>
+                </div>
+              </div>
+
+              <div class="stay-note">
+                <b>今晚住宿</b>
+                <span>继续住呼和浩特市区原酒店，新华广场 / 中山路最顺：早上方便集合，晚上散团后可直接去塞上老街，第二天前往机场也方便。</span>
+              </div>
+
+              <div class="tips">
+                <div class="tip">下单时核对：新华广场集合点、往返索道是否包含、仙沙岛/悦沙岛二选一还是全含、骑骆驼是否另付费。</div>
+                <div class="tip">沙漠遇雷雨或大风时减少项目并提前返程；塞上老街是返城后的弹性安排，体力不足可直接取消。</div>
+              </div>
+            </div>
+          </article>
+
+          <!-- Day 6 -->
+          <article class="day" id="day-6">
+            <div class="date-block">
+              <div>
+                <div class="date">06.30</div>
+                <div class="weekday">周二 返程日</div>
+              </div>
+              <div class="day-num">D6</div>
+            </div>
+            <div class="day-content">
+              <div class="day-top">
+                <span class="tag">购物逛街</span>
+                <h3>上午下午购物逛街，16:30左右去机场</h3>
+              </div>
+              
+              <div class="day-gallery">
+                <figure>
+                  <img loading="lazy" src="https://commons.wikimedia.org/wiki/Special:FilePath/Inner%20Mongolia%20Museum%202017%20A.jpg" alt="内蒙古博物院外观" class="clickable-img">
+                  <figcaption>内蒙古博物院补逛</figcaption>
+                </figure>
+                <figure>
+                  <img loading="lazy" src="https://commons.wikimedia.org/wiki/Special:FilePath/Exterior%20of%20Bayan%20%28Airport%29%20Station%2C%20Hohhot%20Metro.jpg" alt="呼和浩特机场地铁站" class="clickable-img">
+                  <figcaption>白塔机场方向</figcaption>
+                </figure>
+              </div>
+
+              <div class="time-list">
+                <div class="slot">
+                  <time>09:30</time>
+                  <div class="slot-desc">交通：市区内以步行+短途打车为主。上午逛新华广场/中山路商圈，早餐可在老绥元车站东街店或格日勒阿妈新华广场店附近收尾：羊肉烧卖配咸奶茶。</div>
+                </div>
+                <div class="slot">
+                  <time>12:30</time>
+                  <div class="slot-desc">交通：步行或短途打车。午餐选离酒店近的店，别跑太远；下午继续买伴手礼：奶酪、奶皮子、牛肉干、沙棘汁、咸奶茶独立包装。</div>
+                </div>
+                <div class="slot">
+                  <time>14:30</time>
+                  <div class="slot-desc">交通：回酒店取行李。机动时间：整理行李、确认航班动态，别把购物安排到太晚。</div>
+                </div>
+                <div class="slot">
+                  <time>16:30</time>
+                  <div class="slot-desc">交通：行李多打车去白塔机场；行李少可坐地铁1号线前往机场方向。建议16:30左右出发，19:30起飞，预留安检、晚高峰和天气延误空间。</div>
+                </div>
+                <div class="slot">
+                  <time>19:30</time>
+                  <div class="slot-desc">呼和浩特飞长沙。</div>
+                </div>
+              </div>
+
+              <div class="stay-note">
+                <b>当天住宿</b>
+                <span>不再续住也可以；建议把行李寄存在酒店前台，上午轻装活动，下午回酒店取行李后去机场。</span>
+              </div>
+
+              <div class="tips">
+                <div class="tip">6月30日是周二，昭君博物院、五塔寺通常闭馆，不安排它们。</div>
+                <div class="tip">若选择地铁去机场，提前确认末端站点和换乘时间；行李多就打车。</div>
+              </div>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <!-- 周边位置说明 -->
+      <section id="rail-options">
+        <h2>周边位置说明</h2>
+        <p class="lead">乌兰哈达火山、红石崖和响沙湾都能从呼和浩特出发去，但它们不都在市区，交通策略不一样。</p>
+        
+        <div class="table-wrapper">
+          <table>
+            <thead>
+              <tr>
+                <th>地点</th>
+                <th>是否在呼和浩特</th>
+                <th>推荐交通</th>
+                <th>放进行程的位置</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><b>乌兰哈达火山</b></td>
+                <td>不在呼和浩特，在乌兰察布方向</td>
+                <td>推荐与辉腾锡勒草原和蒙古包住宿打包成2日包车/小团</td>
+                <td>6月27日下午，与辉腾锡勒草原同一天串联，晚上住火山附近蒙古包</td>
+              </tr>
+              <tr>
+                <td><b>红石崖</b></td>
+                <td>呼和浩特周边大青山方向，不在市中心</td>
+                <td>推荐半日/一日小团或包车；有呼和浩特直通车产品可查</td>
+                <td>6月26日15:00酒店接车，上午留给将军衙署和青城公园</td>
+              </tr>
+              <tr>
+                <td><b>响沙湾 / 库布齐沙漠</b></td>
+                <td>不在呼和浩特，在鄂尔多斯/达拉特旗方向</td>
+                <td>推荐一日团或包车，公共交通不适合自由行赶时间</td>
+                <td>6月29日沙漠日</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- 必看景点图鉴 -->
+      <section id="spots">
+        <h2>必看景点图鉴</h2>
+        <p class="lead">汇集呼和浩特标志性的核心景观，支持点击放大预览精美实景图片。</p>
+        
+        <div class="grid">
+          <article class="card">
+            <div class="card-img-wrapper">
+              <img src="https://commons.wikimedia.org/wiki/Special:FilePath/Hohhot%20Dazhao%20temple.bell%20tower.jpg" alt="大召寺钟楼" class="clickable-img">
+            </div>
+            <div class="card-body">
+              <span class="tag">大召寺</span>
+              <h3>老城的金顶与红墙</h3>
+              <p>适合放在抵达日，和塞上老街、席力图召一起走。</p>
+            </div>
+          </article>
+
+          <article class="card">
+            <div class="card-img-wrapper">
+              <img src="https://commons.wikimedia.org/wiki/Special:FilePath/Zhaojun%20Bowuyuan.jpg" alt="昭君博物院" class="clickable-img">
+            </div>
+            <div class="card-body">
+              <span class="tag">昭君博物院</span>
+              <h3>看一条和亲叙事线</h3>
+              <p>免费，周二闭馆。园区较大，夏天注意防晒。</p>
+            </div>
+          </article>
+
+          <article class="card">
+            <div class="card-img-wrapper">
+              <img src="https://commons.wikimedia.org/wiki/Special:FilePath/Five%20Pagoda%20Temple%2C%20Huhhot%2C%20Inner%20Mongolia.JPG" alt="五塔寺" class="clickable-img">
+            </div>
+            <div class="card-body">
+              <span class="tag">五塔寺</span>
+              <h3>小而精的古塔</h3>
+              <p>免费，周二闭馆。适合老城慢游日，不必排太久。</p>
+            </div>
+          </article>
+
+          <article class="card">
+            <div class="card-img-wrapper">
+              <img src="https://commons.wikimedia.org/wiki/Special:FilePath/Xilitu%20Zhao%20%2853724498277%29.jpg" alt="席力图召" class="clickable-img">
+            </div>
+            <div class="card-body">
+              <span class="tag">席力图召</span>
+              <h3>大召旁边的安静寺院</h3>
+              <p>离大召寺很近，适合顺路看，不单独占一天。</p>
+            </div>
+          </article>
+
+          <article class="card">
+            <div class="card-img-wrapper">
+              <img src="https://commons.wikimedia.org/wiki/Special:FilePath/Desert%20vehicle%20Xiangshawan.jpg" alt="响沙湾沙漠" class="clickable-img">
+            </div>
+            <div class="card-body">
+              <span class="tag">响沙湾</span>
+              <h3>沙漠项目集中</h3>
+              <p>从呼和浩特出发是长途一日，建议报纯玩团或包车。</p>
+            </div>
+          </article>
+
+          <article class="card">
+            <div class="card-img-wrapper">
+              <img src="https://commons.wikimedia.org/wiki/Special:FilePath/Great%20Mosque%20of%20Hohhot%20front%20view%20202509.jpg" alt="呼和浩特清真大寺" class="clickable-img">
+            </div>
+            <div class="card-body">
+              <span class="tag">清真大寺</span>
+              <h3>回民区街区风貌</h3>
+              <p>和宽巷子、牛街美食一起逛，注意礼仪和拍照边界。</p>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <!-- 交通与住宿建议 -->
+      <section id="tips-hotel">
+        <h2>交通与住宿建议</h2>
+        <p class="lead">精细提炼的出行居住策略，确保旅行少走回头路，省时省力。</p>
+        
+        <div class="split">
+          <div class="panel">
+            <h3>住哪里最顺</h3>
+            <ul class="compact-list">
+              <li><b>新华广场/中山路：</b>地铁、商场、餐饮集中，去机场和博物院都方便，是第一次来最稳的位置。</li>
+              <li><b>大召寺/塞上老街：</b>晚上有烟火气，适合喜欢步行逛老城的人；去东部博物院稍远一点。</li>
+              <li><b>呼和浩特东站/万达：</b>去内蒙古博物院方便，但老城氛围弱些，适合看重交通效率的人。</li>
+              <li><b>本次建议：</b>6月25、26、28、29住呼和浩特市区，6月27住乌兰哈达火山景区附近蒙古包；市区酒店优先选“大召寺/塞上老街”和“新华广场/中山路”之间，并确认在一日游二环内接送范围。</li>
+            </ul>
+          </div>
+          
+          <div class="panel">
+            <h3>远郊怎么走</h3>
+            <ul class="compact-list">
+              <li><b>红石崖+敕勒川：</b>采用15:00二环内酒店上门接的下午小团；预订时确认散团时间，晚餐自备。</li>
+              <li><b>辉腾锡勒+火山+蒙古包：</b>建议定制包车，草原体验后游火山，住火山附近蒙古包；提前确认当晚篝火和次日上午返呼接送。</li>
+              <li><b>机场：</b>返程日建议16:30左右从市区去机场，遇雨天再提前20分钟。</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="panel" style="margin-top: 24px;">
+          <h3>每天住宿位置建议</h3>
+          <div class="table-wrapper">
+            <table>
+              <thead>
+                <tr>
+                  <th>日期</th>
+                  <th>建议位置</th>
+                  <th>原因</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>6月25日</td>
+                  <td>新华广场 / 中山路</td>
+                  <td>机场先去博物院寄存行李并参观，傍晚再向西入住；晚上打车去塞上老街，后续集合与返程也方便。</td>
+                </tr>
+                <tr>
+                  <td>6月26日</td>
+                  <td>新华广场 / 中山路原酒店</td>
+                  <td>上午步行/地铁去将军衙署，下午15:00二环内酒店接车；晚间返城后无需搬行李。</td>
+                </tr>
+                <tr>
+                  <td>6月27日</td>
+                  <td>乌兰哈达火山景区附近蒙古包</td>
+                  <td>看完火山直接入住，不折返辉腾锡勒；优先选独卫热水并明确确认当晚有篝火晚会的营地。</td>
+                </tr>
+                <tr>
+                  <td>6月28日</td>
+                  <td>回市区住新华广场 / 中山路 / 大召寺</td>
+                  <td>草原返城后先洗澡休整，再打车去雕塑艺术馆、泽成冰煮羊和如意河夜景；结束后回中心区住宿。</td>
+                </tr>
+                <tr>
+                  <td>6月29日</td>
+                  <td>新华广场 / 中山路附近原酒店</td>
+                  <td>07:10新华广场集合、晚上也在新华广场附近散团；返城后去塞上老街和第二天去机场都方便。</td>
+                </tr>
+                <tr>
+                  <td>6月30日</td>
+                  <td>不续住，行李寄存酒店</td>
+                  <td>上午轻装活动，下午取行李去机场，避免多订一晚。</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- 预算参考 & 计算器 -->
+      <section id="budget">
+        <h2>预算参考</h2>
+        <p class="lead">以下是常规旅行开支参考，右侧配备了<b>智能动态预算计算器</b>。可实时调整参数并生成精准账单和结构占比分析。</p>
+        
+        <div class="money">
+          <div class="money-card">
+            <strong>1000-2200元</strong>
+            <span>4晚市区酒店 + 1晚火山蒙古包，视商圈、房型、独卫和篝火安排浮动</span>
+          </div>
+          <div class="money-card">
+            <strong>500-900元</strong>
+            <span>市内餐饮，烧麦/羊杂/蒙餐/涮羊肉</span>
+          </div>
+          <div class="money-card">
+            <strong>500-1200元</strong>
+            <span>红石崖/敕勒川 + 辉腾锡勒/乌兰哈达蒙古包与篝火 + 沙漠项目</span>
+          </div>
+          <div class="money-card">
+            <strong>200-500元</strong>
+            <span>市内打车、地铁、伴手礼基础预算</span>
+          </div>
+        </div>
+
+        <!-- 交互预算计算器 -->
+        <div class="calculator-panel">
+          <div class="calc-header">
+            <h3>
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="4" width="16" height="16" rx="2"/><line x1="9" y1="9" x2="15" y2="9"/><line x1="9" y1="13" x2="15" y2="13"/><line x1="9" y1="17" x2="15" y2="17"/><line x1="12" y1="9" x2="12" y2="17"/></svg>
+              青城自由行 · 智能预算计算器
+            </h3>
+            <span style="font-size: 13px; color: var(--text-muted);">基于4晚市区酒店 + 1晚火山蒙古包 + 3个远郊日的6天行程优化</span>
+          </div>
+
+          <div class="calc-grid">
+            <!-- 输入控制 -->
+            <div class="calc-group" style="gap: 18px;">
+              <div class="calc-group">
+                <div class="calc-label">
+                  <span>出行人数</span>
+                  <span id="labelPeople">2 人</span>
+                </div>
+                <input type="range" min="1" max="10" value="2" class="calc-slider" id="inputPeople">
+              </div>
+
+              <div class="calc-group">
+                <div class="calc-label">
+                  <span>住宿标准 / 5晚（含1晚蒙古包估算）</span>
+                  <span id="labelHotelPrice">¥360 / 间 / 晚</span>
+                </div>
+                <select class="calc-select" id="selectHotel">
+                  <option value="180">经济型 (市区快捷+基础蒙古包，均摊 ¥180/晚)</option>
+                  <option value="360" selected>舒适型 (市区商旅+独卫蒙古包，均摊 ¥360/晚)</option>
+                  <option value="700">品质型 (高星酒店+较好草原民宿，均摊 ¥700/晚)</option>
+                </select>
+              </div>
+
+              <div class="calc-group">
+                <div class="calc-label">
+                  <span>当地交通方案</span>
+                </div>
+                <select class="calc-select" id="selectTransport">
+                  <option value="50">市区打车/公交 + 远郊散拼跟团 (均摊 ¥50/人/天)</option>
+                  <option value="150" selected>市区打车 + 远郊2日拼小团/拼车 (均摊 ¥150/人/天)</option>
+                  <option value="400">私人定制专属包车 (包车整车 ¥400/天，上限4人)</option>
+                </select>
+              </div>
+
+              <div class="calc-group">
+                <div class="calc-label">
+                  <span>餐饮偏好 / 天</span>
+                </div>
+                <select class="calc-select" id="selectDining">
+                  <option value="80">经济饱腹 (焙子/羊杂碎/砂锅，平均 ¥80/人)</option>
+                  <option value="150" selected>地道蒙餐 (烧麦/冰煮羊/家常菜，平均 ¥150/人)</option>
+                  <option value="250">吃遍大餐 (高品质蒙餐/大盘手把肉，平均 ¥250/人)</option>
+                </select>
+              </div>
+
+              <div class="calc-group">
+                <div class="calc-label">包含门票与娱乐玩乐项目</div>
+                <div style="display: flex; flex-direction: column; gap: 8px;">
+                  <label class="checkbox-item">
+                    <input type="checkbox" id="checkDazhao" checked data-price="35">
+                    大召寺门票 (¥35 / 人)
+                  </label>
+                  <label class="checkbox-item">
+                    <input type="checkbox" id="checkHuanghua" checked data-price="200">
+                    黄花沟门票+往返索道交通套票 (¥200 / 人)
+                  </label>
+                  <label class="checkbox-item">
+                    <input type="checkbox" id="checkXiangsha" checked data-price="280">
+                    响沙湾索道+仙沙岛游乐套票 (¥280 / 人)
+                  </label>
+                  <label class="checkbox-item">
+                    <input type="checkbox" id="checkGift" checked data-price="150">
+                    奶酪牛肉干伴手礼额度 (¥150 / 人)
+                  </label>
+                </div>
+              </div>
+            </div>
+
+            <!-- 计算结果 -->
+            <div class="calc-results">
+              <div>
+                <h4 style="margin: 0 0 15px 0; color: var(--text-main); font-size: 16px;">开销预估明细</h4>
+                
+                <div class="result-row">
+                  <span>住宿费用总计 (按需要配房)</span>
+                  <strong id="resHotel">¥1,800</strong>
+                </div>
+                <div class="result-row">
+                  <span>餐饮开销总计 (按6天)</span>
+                  <strong id="resDining">¥1,800</strong>
+                </div>
+                <div class="result-row">
+                  <span>交通费用总计</span>
+                  <strong id="resTransport">¥1,800</strong>
+                </div>
+                <div class="result-row">
+                  <span>玩乐门票伴手礼总计</span>
+                  <strong id="resActivities">¥1,330</strong>
+                </div>
+
+                <div class="budget-chart">
+                  <div class="chart-bar-wrapper">
+                    <span>🏠 住宿</span>
+                    <div class="chart-bar-bg"><div class="chart-bar-fill fill-hotel" id="barHotel"></div></div>
+                  </div>
+                  <div class="chart-bar-wrapper">
+                    <span>🥩 餐饮</span>
+                    <div class="chart-bar-bg"><div class="chart-bar-fill fill-dining" id="barDining"></div></div>
+                  </div>
+                  <div class="chart-bar-wrapper">
+                    <span>🚗 交通</span>
+                    <div class="chart-bar-bg"><div class="chart-bar-fill fill-transport" id="barTransport"></div></div>
+                  </div>
+                  <div class="chart-bar-wrapper">
+                    <span>🎟️ 玩乐</span>
+                    <div class="chart-bar-bg"><div class="chart-bar-fill fill-activity" id="barActivities"></div></div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="grand-total">
+                <div style="font-size: 13px; color: var(--text-muted);">预估预算总开销</div>
+                <div class="total-num" id="grandTotal">¥6,430</div>
+                <div class="per-capita" id="perCapita">人均约: ¥3,215 / 人</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 美食清单 -->
+      <section id="food">
+        <h2>美食清单</h2>
+        <p class="lead">不容错过的内蒙古风味！精选美食的食法攻略与日程完美融合：</p>
+        
+        <div class="table-wrapper">
+          <table>
+            <thead>
+              <tr>
+                <th>类别</th>
+                <th>推荐吃法</th>
+                <th>安排在哪天</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><b>羊肉烧卖 / 烧麦 / 稍麦</b></td>
+                <td>羊肉馅现蒸最香，建议配咸奶茶；早上或午餐吃都合适。老绥元、德顺源等老店可按距离选择。</td>
+                <td>6月25午餐、6月30返程前补吃</td>
+              </tr>
+              <tr>
+                <td><b>羊杂碎</b></td>
+                <td>汤底浓，适合早餐或宵夜。第一次吃可点小份，搭配焙子。</td>
+                <td>6月25晚上宽巷子</td>
+              </tr>
+              <tr>
+                <td><b>冰煮羊 / 涮羊肉</b></td>
+                <td>适合多人或晚餐，重点吃羊肉本味。</td>
+                <td>6月28晚餐，或6月30返程前简餐不够时补一顿</td>
+              </tr>
+              <tr>
+                <td><b>火山/沙漠日简餐</b></td>
+                <td>远郊日餐饮不稳定，建议带水、焙子、能量棒；回城后再吃冰煮羊或羊杂。</td>
+                <td>6月27乌兰哈达、6月29沙漠日</td>
+              </tr>
+              <tr>
+                <td><b>奶食与甜品</b></td>
+                <td>咸奶茶适合配烧卖、焙子和羊肉；奶皮子、酸奶饼、奶酪可当伴手礼，选真空或独立小包装更稳。</td>
+                <td>6月25午餐/晚餐、6月27草原、6月28冰煮羊晚餐、6月30收尾</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="panel" style="margin-top: 24px;">
+          <h3>具体去哪吃</h3>
+          <div class="table-wrapper">
+            <table>
+              <thead>
+                <tr>
+                  <th>店 / 街区</th>
+                  <th>位置</th>
+                  <th>适合安排</th>
+                  <th>点单建议</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><b>老绥元烧麦（如意店）</b></td>
+                  <td>市政府西侧如意小区东门南侧</td>
+                  <td>6月25日博物院前午餐</td>
+                  <td>羊肉大葱或沙葱烧卖，配砖茶/咸奶茶；位于机场、博物院与市政府片区之间，适合优化后的抵达日。</td>
+                </tr>
+                <tr>
+                  <td><b>老绥元烧麦·家常菜（大召店）</b></td>
+                  <td>玉泉区大南街，席力图召东约50米</td>
+                  <td>6月30日返程前备选</td>
+                  <td>羊肉大葱烧卖或沙葱羊肉烧卖，配咸奶茶/砖茶；离大召、席力图召近，最顺路。</td>
+                </tr>
+                <tr>
+                  <td><b>德顺源·非遗烧麦（大盛魁店）</b></td>
+                  <td>玉泉区席力图召东侧，大盛魁商业街1号</td>
+                  <td>6月25日晚老城备选、6月27日出发前打包备选</td>
+                  <td>羊肉烧卖配茶，饭后顺路逛大盛魁、塞上老街；也适合作为大召片区备选。</td>
+                </tr>
+                <tr>
+                  <td><b>格日勒阿妈奶茶馆（锡林郭勒北路 / 新华广场店）</b></td>
+                  <td>新城区锡林北路93号新华广场2楼</td>
+                  <td>6月30日返程前，或住店期间备选</td>
+                  <td>咸奶茶或锅茶，搭配奶皮子、炒米、酸奶饼；适合专门喝奶茶，不一定主攻烧卖。</td>
+                </tr>
+                <tr>
+                  <td><b>老绥元烧麦（车站东街店）</b></td>
+                  <td>呼伦贝尔北路交叉口向西约200米路北，铁路体育馆西侧</td>
+                  <td>住新华广场/火车站附近时，6月30日早餐</td>
+                  <td>羊肉烧卖作返程前收尾；离新华广场、呼和浩特站片区较近。</td>
+                </tr>
+                <tr>
+                  <td><b>宽巷子美食街</b></td>
+                  <td>回民区宽巷子路，旧城北门一带</td>
+                  <td>6月25日晚上</td>
+                  <td>适合边走边吃：焙子、羊杂、羊肉串、奶豆腐饼；想吃烧卖可找老铁家烧麦等街区小店。</td>
+                </tr>
+                <tr>
+                  <td><b>白老大羊杂稍麦（宽巷子总店）</b></td>
+                  <td>回民区祥和一区北门西约90米</td>
+                  <td>6月25晚上加餐</td>
+                  <td>羊杂、稍麦、焙子、奶茶，适合在宽巷子集中解决几样本地小吃。</td>
+                </tr>
+                <tr>
+                  <td><b>顺成德冰煮羊</b></td>
+                  <td>回民区牛街北</td>
+                  <td>6月30返程前备选</td>
+                  <td>冰煮羊、手把肉、羊肉火锅类；适合正餐，建议提前看排队情况。</td>
+                </tr>
+                <tr>
+                  <td><b>三和元非遗冰煮羊（塞上老街店）</b></td>
+                  <td>玉泉区小召前街大盛魁文创园B区106号商铺1-2号</td>
+                  <td>6月29日响沙湾返城后的晚餐备选</td>
+                  <td>冰煮羊、羊排、热菜，离大召和塞上老街近；吃完从老城打车回新华广场/中山路酒店。</td>
+                </tr>
+                <tr>
+                  <td><b>半亩地·莜面大王（五四商城店）</b></td>
+                  <td>锡林南路3号加利大厦1楼</td>
+                  <td>6月28返城后备选简餐</td>
+                  <td>凉拌莜面、烤土豆、自制酸奶；若包车较早回城，可先在这里吃午餐再回酒店。</td>
+                </tr>
+                <tr>
+                  <td><b>泽成冰煮羊（三分店）</b></td>
+                  <td>赛罕区大学东街巨海城一区北门旁</td>
+                  <td>6月28雕塑艺术馆后晚餐</td>
+                  <td>冰煮羊、蒙古烤包子、酸奶饼；之后打车去如意广场/如意河看夜景。建议当天确认晚市营业时间。</td>
+                </tr>
+                <tr>
+                  <td><b>草原/火山路上自备</b></td>
+                  <td>提前在市区便利店或烧麦店打包</td>
+                  <td>6月26、6月27</td>
+                  <td>水、焙子、烧卖、能量棒、纸巾和垃圾袋；乌兰哈达火山周边餐饮选择有限。</td>
+                </tr>
+                <tr>
+                  <td><b>沙漠日回城简餐</b></td>
+                  <td>塞上老街 / 大召广场，或新华广场酒店周边</td>
+                  <td>6月29晚</td>
+                  <td>正常19:30散团可去塞上老街吃烧卖、羊杂、焙子；若晚于20:15，直接在酒店附近简餐或外卖。</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <p class="lead" style="margin-top: 14px;">小提醒：烧卖店早餐和午餐人气高，建议错峰或提前在地图软件确认营业状态；“烧麦/稍麦/烧卖”在呼市常指同一类本地小吃。</p>
+        </div>
+      </section>
+
+      <!-- 闭馆与风险提醒 -->
+      <section id="rules">
+        <h2>闭馆与风险提醒</h2>
+        <p class="lead">防范于未然，是完美自由行不可或缺的功课。</p>
+        
+        <div class="split">
+          <div class="panel">
+            <h3 style="border-bottom-color: rgba(168, 58, 50, 0.2); color: var(--accent-red);">🏛️ 闭馆规则</h3>
+            <ul class="compact-list">
+              <li><b>内蒙古博物院：</b>通常周一闭馆，6月29日不要排。</li>
+              <li><b>昭君博物院：</b>通常周二闭馆，6月30日不要排。</li>
+              <li><b>五塔寺：</b>通常周二闭馆，6月30日不要排。</li>
+              <li><b>大召寺：</b>旺季开放时间较长，但宗教活动和节假日安排可能临时调整。</li>
+            </ul>
+          </div>
+          
+          <div class="panel">
+            <h3 style="border-bottom-color: rgba(184, 138, 68, 0.2); color: var(--accent-gold);">⚡ 天气与安全</h3>
+            <ul class="compact-list">
+              <li>雷阵雨时不要骑马、爬高处、站在开阔草原或沙丘顶部。</li>
+              <li>沙漠项目看风力，遇大风沙尘优先取消刺激项目。</li>
+              <li>草原和沙漠紫外线强，墨镜、防晒、帽子和补水都要带。</li>
+              <li>每天出发前看中国天气网、景区公众号或平台通知。</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <!-- 资料来源 -->
+      <section id="sources">
+        <h2>资料来源</h2>
+        <p class="lead">所有官方政策、天气查询及路线灵感参考：</p>
+        
+        <div class="source-list">
+          <a href="https://weather.cma.cn/web/weather/53466.html" target="_blank" rel="noreferrer">中国气象局：呼和浩特天气</a>
+          <a href="https://www.nmc.cn/publish/forecast/ANM/wulanchabu.html" target="_blank" rel="noreferrer">中央气象台：乌兰察布天气</a>
+          <a href="https://www.nmc.cn/publish/forecast/ANM/eerduosi.html" target="_blank" rel="noreferrer">中央气象台：鄂尔多斯天气</a>
+          <a href="https://www.weather.com.cn/weather40d/101080101.shtml" target="_blank" rel="noreferrer">中国天气网：40天大跨度预报</a>
+          <a href="https://hu.bendibao.com/news/2025109/66282.shtm" target="_blank" rel="noreferrer">本地宝：内蒙古博物院预约</a>
+          <a href="https://inews.nmgnews.com.cn/system/2025/06/19/030173915.shtml" target="_blank" rel="noreferrer">内蒙古新闻网：内蒙古博物院新馆大件行李寄存设施</a>
+          <a href="https://hu.bendibao.com/jingdian/zhaojunbowuyuan/" target="_blank" rel="noreferrer">本地宝：昭君博物院指南</a>
+          <a href="https://hu.bendibao.com/jingdian/huhehaotewutasi/" target="_blank" rel="noreferrer">本地宝：五塔寺门票规则</a>
+          <a href="https://hu.bendibao.com/tour/53070.shtm" target="_blank" rel="noreferrer">本地宝：大召寺旺季票价</a>
+          <a href="https://www.hhhtbtjc.com/cnbtjc/sqjt/sqjt.shtml" target="_blank" rel="noreferrer">白塔机场官方：市区交通大厅</a>
+          <a href="https://hu.bendibao.com/jingdian/lechuancaoyuanwenhualvyouqu/" target="_blank" rel="noreferrer">本地宝：敕勒川游览细则</a>
+          <a href="https://hu.bendibao.com/tour/2024517/60118.shtm" target="_blank" rel="noreferrer">本地宝：呼和浩特景点地铁出行攻略</a>
+          <a href="https://m.hu.bendibao.com/tour/53225.shtm" target="_blank" rel="noreferrer">本地宝：将军衙署预约与参观信息</a>
+          <a href="https://m.hu.bendibao.com/tour/67855.shtm" target="_blank" rel="noreferrer">将军衙署博物馆：2026年开放时间与交通参考</a>
+          <a href="https://hk.trip.com/travel-guide/attraction/hohhot/qingcheng-park-10535076/" target="_blank" rel="noreferrer">Trip.com：青城公园位置与开放参考</a>
+          <a href="https://www.nmg.xinhuanet.com/20231015/fb789744641049b89b5c3dcd5efe3787/c.html" target="_blank" rel="noreferrer">新华网：呼和浩特雕塑艺术馆开放信息</a>
+          <a href="https://hk.trip.com/travel-guide/attraction/hohhot/ruyi-square-22666707/" target="_blank" rel="noreferrer">Trip.com：如意广场位置与夜游参考</a>
+          <a href="https://www.klook.com/zh-CN/activity/153333-huhhot-departure-huiteng-xile-huanghuagou-scenic-area-private-group/" target="_blank" rel="noreferrer">Klook：黄花沟一日游包车参看</a>
+          <a href="https://www.klook.com/zh-CN/activity/12231-whistling-dune-bay-tourist-area-ticket-inner-mongolia/" target="_blank" rel="noreferrer">Klook：响沙湾娱乐项目清单</a>
+          <a href="https://hk.trip.com/travel-guide/attraction/qahar-right-middle-banner/huitengxile-huanghua-valley-88666/" target="_blank" rel="noreferrer">Trip.com：辉腾锡勒黄花沟周边餐饮与度假村参考</a>
+          <a href="https://hk.trip.com/hotels/chayouzhongqi-huitengxile-grassland/hotels-c21160m4209596/" target="_blank" rel="noreferrer">Trip.com：辉腾锡勒草原周边住宿参考</a>
+          <a href="https://hk.trip.com/travel-guide/attraction/qahar-right-rear-banner/wulanhada-volcano-geopark-51540646/" target="_blank" rel="noreferrer">Trip.com：乌兰哈达火山地质公园位置与游览信息</a>
+          <a href="https://hk.trip.com/hotels/chayouhouqi-wulanhada-volcano-geopark/hotels-c21300m10665144/" target="_blank" rel="noreferrer">Trip.com：乌兰哈达火山周边蒙古包与住宿</a>
+          <a href="https://m.ctrip.com/html5/hotel/hoteldetail/99727959.html" target="_blank" rel="noreferrer">携程：都蓝民宿（蒙古包、篝火晚会参考）</a>
+          <a href="https://www.wingontravel.com/hotel/detail-chayouhouqi-94808858/saibei-lnn/" target="_blank" rel="noreferrer">永安旅游：塞北驿站乌兰哈达蒙古包参考</a>
+          <a href="https://www.news.cn/politics/20250507/aa4b830e01b94f2cb9907aabee5848df/c.html" target="_blank" rel="noreferrer">新华网：乌兰哈达火山游交通与玩法背景</a>
+          <a href="https://hk.trip.com/travel-guide/attraction/zhuozi/hongshiya-national-ecological-park-inner-mongolia-134004661/" target="_blank" rel="noreferrer">Trip.com：红石崖国家生态公园开放与门票信息</a>
+          <a href="https://www.klook.com/zh-CN/activity/219274-hohhot-chilechuan-hongshiya-day-tour-with-small-group/" target="_blank" rel="noreferrer">Klook：呼和浩特出发红石崖小团参考</a>
+          <a href="https://www.hhhtctc.cn/index/shopping/msxq.html?id=1" target="_blank" rel="noreferrer">呼和浩特市文化旅游信息平台：烧麦推荐地点</a>
+          <a href="https://hhhtctc.cn/index/shopping/msxq.html?id=3" target="_blank" rel="noreferrer">呼和浩特市文化旅游信息平台：羊杂碎推荐地点</a>
+          <a href="https://www.wingontravel.com/discovery/restaurant-34558237" target="_blank" rel="noreferrer">永安旅游：老绥元烧麦·家常菜（大召店）地址</a>
+          <a href="https://hk.trip.com/restaurant/china/hohhot/detail/laosuiyuan-20545812/" target="_blank" rel="noreferrer">Trip.com：老绥元烧麦（车站东街店）地址</a>
+          <a href="https://you.ctrip.com/food/hohhot156/12513942-food.html" target="_blank" rel="noreferrer">携程：老绥元烧麦（如意店）地址与菜品</a>
+          <a href="https://hk.trip.com/restaurant/china/hohhot/detail/de-shun-yuan-da-sheng-kui-dian-37011574/" target="_blank" rel="noreferrer">Trip.com：德顺源（大盛魁店）地址</a>
+          <a href="https://cn.tripadvisor.com/Restaurant_Review-g297440-d4964500-Reviews-Ge_Ri_Le_AMa_Nai_ChaGuan_XiLin_Guo_Le_Bei_Road-Hohhot_Inner_Mongolia.html" target="_blank" rel="noreferrer">Tripadvisor：格日勒阿妈奶茶馆（锡林郭勒北路）地址</a>
+          <a href="https://you.ctrip.com/food/156/7467190.html" target="_blank" rel="noreferrer">携程：德顺源·非遗烧麦（大观园店）顺路参考</a>
+          <a href="https://hu.bendibao.com/wangdian/dian/4471131.shtm" target="_blank" rel="noreferrer">本地宝：顺成德冰煮羊地址</a>
+          <a href="https://hk.trip.com/restaurant/china/hohhot/detail/restaurant-16991095/" target="_blank" rel="noreferrer">Trip.com：泽成冰煮羊（三分店）地址与菜品</a>
+          <a href="https://www.amap.com/place/B01D702QFQ" target="_blank" rel="noreferrer">高德地图：三和元非遗冰煮羊（塞上老街店）地址</a>
+          <a href="https://www.amap.com/place/B01D702DH6" target="_blank" rel="noreferrer">高德地图：白老大羊杂稍麦（宽巷子总店）地址</a>
+          <a href="https://www.csair.com/h5/cn/tourism_strategy/guonei_lvyougonglve/Huhehot2/1cf4mg5nhose8.shtml" target="_blank" rel="noreferrer">南航旅游攻略：宽巷子美食街位置与推荐店铺</a>
+          <a href="https://commons.wikimedia.org/" target="_blank" rel="noreferrer">Wikimedia Commons：公共领域图片</a>
+          <a href="https://leafletjs.com/reference.html" target="_blank" rel="noreferrer">Leaflet：每日互动路线地图组件</a>
+          <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noreferrer">OpenStreetMap：地图底图与数据署名</a>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <!-- 浮动辅助小工具 -->
+  <div class="floating-tools">
+    <!-- 移动端侧栏打开按钮 -->
+    <div class="float-btn menu-toggle" id="menuToggle">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+    </div>
+    <!-- 返回顶部 -->
+    <div class="float-btn back-to-top" id="backToTop">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="18 15 12 9 6 15"/></svg>
+    </div>
+  </div>
+
+  <!-- 移动端抽屉导航 -->
+  <div class="mobile-overlay" id="mobileOverlay"></div>
+  <div class="mobile-sidebar" id="mobileSidebar">
+    <div class="brand" style="margin-bottom: 30px;">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 22h20L12 2z"/></svg>
+      导航目录
+    </div>
+    <!-- 复制菜单到手机端 -->
+  </div>
+
+  <!-- 全局图片浏览器 (Lightbox) -->
+  <div class="lightbox" id="lightbox">
+    <button class="lightbox-close" id="lightboxClose">&times;</button>
+    <button class="lightbox-btn lightbox-prev" id="lightboxPrev">&#10094;</button>
+    <div class="lightbox-content">
+      <img src="" id="lightboxImg" alt="Lightbox Image">
+    </div>
+    <button class="lightbox-btn lightbox-next" id="lightboxNext">&#10095;</button>
+    <div class="lightbox-caption" id="lightboxCaption"></div>
+  </div>
+
+  <footer>
+    <div>资料整理时间：2026年6月23日 · 呼和浩特旅行攻略小组</div>
+    <div>门票、开放时间、天气和交通可能临时调整，出发前一天请再核对景区公众号。</div>
+  </footer>
+
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
+  <script>
+    // ----------------------------------------------------
+    // 0. 每日互动路线地图
+    // ----------------------------------------------------
+    const dailyRoutes = {
+      'day-1': {
+        amap: 'https://uri.amap.com/search?keyword=内蒙古博物院&city=呼和浩特',
+        note: '优化后由东向西推进：机场直达博物院寄存行李，参观后入住市中心，晚上再去老城。',
+        stops: [
+          { name: '白塔国际机场', time: '11:30', lat: 40.850922, lng: 111.818034 },
+          { name: '内蒙古博物院入口寄存行李', time: '12:30', lat: 40.834850, lng: 111.727900 },
+          { name: '老绥元烧麦（如意店）', time: '12:40', lat: 40.831500, lng: 111.751000 },
+          { name: '内蒙古博物院参观', time: '13:40', lat: 40.835439, lng: 111.728527 },
+          { name: '新华广场 / 中山路酒店', time: '17:30', lat: 40.820158, lng: 111.660957 },
+          { name: '塞上老街 / 大召片区', time: '18:40', lat: 40.797205, lng: 111.644477 }
+        ]
+      },
+      'day-2': {
+        amap: 'https://uri.amap.com/search?keyword=红石崖国家生态公园&city=乌兰察布',
+        note: '上午在市中心轻逛，13:15回酒店休息；15:00由酒店接车去红石崖。远郊连线仅表达游览顺序。',
+        stops: [
+          { name: '新华广场 / 中山路酒店', time: '08:30', lat: 40.820158, lng: 111.660957 },
+          { name: '绥远城将军衙署', time: '09:00', lat: 40.825068, lng: 111.680062 },
+          { name: '青城公园', time: '10:45', lat: 40.805414, lng: 111.660082 },
+          { name: '酒店上门接车', time: '15:00', lat: 40.820158, lng: 111.660957 },
+          { name: '敕勒川高山草原', time: '16:30', lat: 41.005000, lng: 112.245000 },
+          { name: '红石崖国家生态公园', time: '17:30', lat: 41.041962, lng: 112.345513 },
+          { name: '石崖寺与空中草原', time: '18:30', lat: 41.055000, lng: 112.355000 },
+          { name: '返回呼和浩特酒店', time: '约22:00', lat: 40.820158, lng: 111.660957 }
+        ]
+      },
+      'day-3': {
+        amap: 'https://uri.amap.com/search?keyword=乌兰哈达火山地质公园&city=乌兰察布',
+        note: '当天不返回呼市：辉腾锡勒游玩后前往乌兰哈达，最终在火山附近蒙古包住宿。',
+        stops: [
+          { name: '呼和浩特市区酒店', time: '07:00', lat: 40.820158, lng: 111.660957 },
+          { name: '辉腾锡勒草原', time: '10:00', lat: 41.116203, lng: 112.651696 },
+          { name: '乌兰哈达火山群', time: '14:00', lat: 41.601052, lng: 113.124779 },
+          { name: '火山附近蒙古包营地', time: '17:15', lat: 41.610791, lng: 113.141704 }
+        ]
+      },
+      'day-4': {
+        amap: 'https://uri.amap.com/search?keyword=呼和浩特雕塑艺术馆&city=呼和浩特',
+        note: '上午为火山返城长途段，下午和晚上为呼市东部城区短途打车路线。',
+        stops: [
+          { name: '火山蒙古包营地', time: '09:00', lat: 41.610791, lng: 113.141704 },
+          { name: '呼和浩特市区酒店', time: '14:30', lat: 40.820158, lng: 111.660957 },
+          { name: '呼和浩特雕塑艺术馆', time: '16:00', lat: 40.831912, lng: 111.733339 },
+          { name: '泽成冰煮羊（三分店）', time: '18:15', lat: 40.824800, lng: 111.752000 },
+          { name: '如意广场 / 如意河', time: '20:00', lat: 40.830431, lng: 111.751644 },
+          { name: '返回市区酒店', time: '21:20', lat: 40.820158, lng: 111.660957 }
+        ]
+      },
+      'day-5': {
+        amap: 'https://uri.amap.com/search?keyword=响沙湾旅游区&city=鄂尔多斯',
+        note: '07:10新华广场集合，响沙湾游玩后返回新华广场，再打车去塞上老街；长途连线仅表达方向。',
+        stops: [
+          { name: '新华广场集合', time: '07:10', lat: 40.820158, lng: 111.660957 },
+          { name: '响沙湾旅游区', time: '09:40', lat: 40.160044, lng: 109.923389 },
+          { name: '新华广场散团', time: '19:30', lat: 40.820158, lng: 111.660957 },
+          { name: '塞上老街 / 大召片区', time: '20:00', lat: 40.797205, lng: 111.644477 }
+        ]
+      },
+      'day-6': {
+        amap: 'https://uri.amap.com/search?keyword=呼和浩特白塔国际机场&city=呼和浩特',
+        note: '购物点可按酒店位置调整；建议16:30前取好行李，从市区前往白塔机场。',
+        stops: [
+          { name: '市区酒店 / 行李寄存', time: '09:00', lat: 40.820158, lng: 111.660957 },
+          { name: '中山路 / 维多利商圈', time: '10:00', lat: 40.816400, lng: 111.666000 },
+          { name: '宽巷子伴手礼补购', time: '13:30', lat: 40.813600, lng: 111.650000 },
+          { name: '返回酒店取行李', time: '15:45', lat: 40.820158, lng: 111.660957 },
+          { name: '白塔国际机场', time: '17:20', lat: 40.850922, lng: 111.818034 }
+        ]
+      }
+    };
+
+    function buildRouteMapPanels() {
+      Object.entries(dailyRoutes).forEach(([dayId, route]) => {
+        const day = document.getElementById(dayId);
+        const gallery = day && day.querySelector('.day-gallery');
+        if (!gallery) return;
+
+        const panel = document.createElement('div');
+        panel.className = 'route-map-panel';
+        panel.innerHTML = `
+          <div class="route-map-head">
+            <div class="route-map-title">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="10" r="3"/><path d="M12 22s7-6.2 7-12a7 7 0 1 0-14 0c0 5.8 7 12 7 12z"/></svg>
+              今日路线地图
+            </div>
+            <a class="route-map-link" href="${route.amap}" target="_blank" rel="noreferrer">高德查看</a>
+          </div>
+          <div class="route-map" id="route-map-${dayId}"></div>
+          <div class="route-map-fallback">地图底图暂未加载，可点击右上角在高德地图中查看。</div>
+          <ol class="route-stops"></ol>
+          <div class="route-map-note">${route.note}</div>
+        `;
+        gallery.insertAdjacentElement('afterend', panel);
+
+        const stopList = panel.querySelector('.route-stops');
+        stopList.innerHTML = route.stops.map((stop, index) =>
+          `<li><span class="route-stop-num">${index + 1}</span><span>${stop.time} ${stop.name}</span></li>`
+        ).join('');
+
+        const mapElement = panel.querySelector('.route-map');
+        const fallback = panel.querySelector('.route-map-fallback');
+        if (!window.L) {
+          mapElement.style.display = 'none';
+          fallback.style.display = 'flex';
+          return;
+        }
+
+        const map = L.map(mapElement, {
+          scrollWheelZoom: false,
+          zoomControl: true,
+          attributionControl: true
+        });
+
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+          maxZoom: 18,
+          attribution: '&copy; OpenStreetMap contributors'
+        }).addTo(map);
+
+        const routePoints = route.stops.map(stop => [stop.lat, stop.lng]);
+        route.stops.forEach((stop, index) => {
+          const markerIcon = L.divIcon({
+            className: '',
+            html: `<span class="route-marker">${index + 1}</span>`,
+            iconSize: [28, 28],
+            iconAnchor: [14, 14],
+            popupAnchor: [0, -13]
+          });
+          L.marker([stop.lat, stop.lng], {
+            icon: markerIcon,
+            title: stop.name,
+            alt: `${index + 1}. ${stop.name}`
+          })
+            .addTo(map)
+            .bindPopup(`<strong>${index + 1}. ${stop.name}</strong><br>${stop.time}`);
+        });
+
+        L.polyline(routePoints, {
+          color: '#a83a32',
+          weight: 4,
+          opacity: 0.82,
+          dashArray: '9 7'
+        }).addTo(map);
+
+        map.fitBounds(routePoints, {
+          padding: [30, 30],
+          maxZoom: 13
+        });
+        L.control.scale({ imperial: false, position: 'bottomleft' }).addTo(map);
+      });
+    }
+
+    buildRouteMapPanels();
+
+    // ----------------------------------------------------
+    // 1. 进度条 & 菜单 Scrollspy
+    // ----------------------------------------------------
+    const sections = document.querySelectorAll('section, article[id^="day-"]');
+    const navLinks = document.querySelectorAll('.nav-link');
+    const progressBar = document.getElementById('progressBar');
+
+    window.addEventListener('scroll', () => {
+      // 进度条计算
+      const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
+      const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+      const scrolled = (winScroll / height) * 100;
+      progressBar.style.width = scrolled + '%';
+
+      // 返回顶部按钮显隐
+      const backBtn = document.getElementById('backToTop');
+      if (winScroll > 400) {
+        backBtn.classList.add('show');
+      } else {
+        backBtn.classList.remove('show');
+      }
+
+      // Scrollspy
+      let currentSectionId = '';
+      sections.forEach(section => {
+        const sectionTop = section.offsetTop;
+        const sectionHeight = section.clientHeight;
+        if (pageYOffset >= (sectionTop - 120)) {
+          currentSectionId = section.getAttribute('id');
+        }
+      });
+
+      if (currentSectionId) {
+        navLinks.forEach(link => {
+          link.classList.remove('active');
+          if (link.getAttribute('href') === '#' + currentSectionId) {
+            link.classList.add('active');
+          }
+        });
+        // 手机端菜单同步高亮
+        const mobLinks = document.querySelectorAll('.mobile-sidebar .nav-link');
+        mobLinks.forEach(link => {
+          link.classList.remove('active');
+          if (link.getAttribute('href') === '#' + currentSectionId) {
+            link.classList.add('active');
+          }
+        });
+      }
+    });
+
+    // 返回顶部动作
+    document.getElementById('backToTop').addEventListener('click', () => {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+
+    // ----------------------------------------------------
+    // 2. 移动端抽屉菜单逻辑
+    // ----------------------------------------------------
+    const menuToggle = document.getElementById('menuToggle');
+    const mobileSidebar = document.getElementById('mobileSidebar');
+    const mobileOverlay = document.getElementById('mobileOverlay');
+
+    // 把大屏幕侧边栏目录完美复制到手机端侧边栏
+    mobileSidebar.innerHTML = document.querySelector('aside').innerHTML;
+    
+    // 重新获取手机端的链接
+    const mobileLinks = mobileSidebar.querySelectorAll('.nav-link');
+
+    const toggleMobileMenu = () => {
+      mobileSidebar.classList.toggle('show');
+      mobileOverlay.classList.toggle('show');
+    };
+
+    menuToggle.addEventListener('click', toggleMobileMenu);
+    mobileOverlay.addEventListener('click', toggleMobileMenu);
+
+    mobileLinks.forEach(link => {
+      link.addEventListener('click', () => {
+        mobileSidebar.classList.remove('show');
+        mobileOverlay.classList.remove('show');
+      });
+    });
+
+    // ----------------------------------------------------
+    // 3. 互动行前准备清单 (LocalStorage 缓存)
+    // ----------------------------------------------------
+    const checklistData = [
+      { id: 'item_sfz', text: '身份证、优惠证件（学生证/教师证/军官证等）', desc: '购买门票和入住酒店的核心要件', cat: 'docs' },
+      { id: 'item_bwy', text: '内蒙古博物院预约（6月25日下午场）', desc: '提前在官方微信公众号免费预约，注意16:00停止入馆', cat: 'docs' },
+      { id: 'item_jt', text: '预订机票/大交通并确认乘机人', desc: '6月25日 11:30 抵呼，6月30日 19:30 离呼', cat: 'docs' },
+      { id: 'item_hotel', text: '预订市区酒店4晚 + 火山蒙古包1晚', desc: '蒙古包确认独卫、热水、晚餐、6月27日篝火晚会和6月28日上午返呼接送', cat: 'docs' },
+      { id: 'item_car', text: '确定草原、火山和沙漠行程用车', desc: '6月26日确认15:00酒店接车及散团时间；6月27日需定制包车在火山蒙古包下车', cat: 'docs' },
+      
+      { id: 'item_sun', text: '高防护防晒霜、遮阳伞、帽子及墨镜', desc: '高原和库布齐沙漠日晒强，无遮挡', cat: 'clothes' },
+      { id: 'item_rain', text: '雨衣或超轻防雨外套', desc: '6月是局部雷阵雨多发期，草原风大，雨衣优于雨伞', cat: 'clothes' },
+      { id: 'item_coat', text: '防风外套或冲锋衣', desc: '草原早晚只有十余度，风电景区风力极大，御寒必备', cat: 'clothes' },
+      { id: 'item_shoes', text: '轻便防滑运动鞋/登山鞋', desc: '沙漠徒步和黄花沟峡谷阶梯多，防沙防滑为主', cat: 'clothes' },
+      
+      { id: 'item_power', text: '大容量充电宝（20000mAh）', desc: '两日远郊行车在3小时以上，拍照多电量消耗快', cat: 'gadgets' },
+      { id: 'item_med_car', text: '防晕车药、晕车贴', desc: '去往草原有盘山路，颠簸时间长，易晕车者必备', cat: 'gadgets' },
+      { id: 'item_med_common', text: '个人常备药、花露水防蚊喷雾', desc: '草原防蚊虫，带好退烧消炎和肠胃药', cat: 'gadgets' }
+    ];
+
+    const checklistItemsContainer = document.getElementById('checklistItems');
+    const progressPercentText = document.getElementById('progressPercent');
+    const progressBarFill = document.getElementById('progressBarFill');
+    let currentChecklistTab = 'all';
+
+    // 初始化 checklist
+    function renderChecklist() {
+      checklistItemsContainer.innerHTML = '';
+      
+      // 过滤对应分类的条目
+      const filteredData = checklistData.filter(item => {
+        if (currentChecklistTab === 'all') return true;
+        return item.cat === currentChecklistTab;
+      });
+
+      // 从 localStorage 中读取状态
+      const checkedStates = JSON.parse(localStorage.getItem('qiangcheng_checklist_v1') || '{}');
+
+      filteredData.forEach(item => {
+        const isChecked = !!checkedStates[item.id];
+        
+        const div = document.createElement('div');
+        div.className = `checklist-item ${isChecked ? 'checked' : ''}`;
+        div.dataset.id = item.id;
+        
+        div.innerHTML = `
+          <input type="checkbox" id="${item.id}" ${isChecked ? 'checked' : ''}>
+          <div>
+            <strong class="checklist-item-title">${item.text}</strong>
+            <span class="checklist-item-desc">${item.desc}</span>
+          </div>
+        `;
+
+        // 绑定点击事件 (整行可点)
+        div.addEventListener('click', (e) => {
+          if (e.target.tagName !== 'INPUT') {
+            const checkbox = div.querySelector('input');
+            checkbox.checked = !checkbox.checked;
+          }
+          toggleItemState(item.id, div.querySelector('input').checked);
+        });
+
+        checklistItemsContainer.appendChild(div);
+      });
+
+      calculateChecklistProgress();
+    }
+
+    // 改变条目状态
+    function toggleItemState(itemId, checked) {
+      const checkedStates = JSON.parse(localStorage.getItem('qiangcheng_checklist_v1') || '{}');
+      checkedStates[itemId] = checked;
+      localStorage.setItem('qiangcheng_checklist_v1', JSON.stringify(checkedStates));
+      
+      const itemEl = document.querySelector(`.checklist-item[data-id="${itemId}"]`);
+      if (itemEl) {
+        if (checked) {
+          itemEl.classList.add('checked');
+        } else {
+          itemEl.classList.remove('checked');
+        }
+      }
+      
+      calculateChecklistProgress();
+    }
+
+    // 计算清单总进度
+    function calculateChecklistProgress() {
+      const checkedStates = JSON.parse(localStorage.getItem('qiangcheng_checklist_v1') || '{}');
+      let checkedCount = 0;
+      
+      checklistData.forEach(item => {
+        if (checkedStates[item.id]) {
+          checkedCount++;
+        }
+      });
+
+      const percent = Math.round((checkedCount / checklistData.length) * 100);
+      progressPercentText.innerText = percent + '%';
+      progressBarFill.style.width = percent + '%';
+    }
+
+    // 处理分类 tab 切换
+    document.querySelectorAll('.checklist-tab').forEach(tab => {
+      tab.addEventListener('click', () => {
+        document.querySelectorAll('.checklist-tab').forEach(t => t.classList.remove('active'));
+        tab.classList.add('active');
+        currentChecklistTab = tab.dataset.tab;
+        renderChecklist();
+      });
+    });
+
+    // 重置清单
+    document.getElementById('resetChecklistBtn').addEventListener('click', () => {
+      if (confirm('确认重置您的行前准备清单吗？')) {
+        localStorage.removeItem('qiangcheng_checklist_v1');
+        renderChecklist();
+      }
+    });
+
+    // 首屏渲染清单
+    renderChecklist();
+
+
+    // ----------------------------------------------------
+    // 4. 智能动态预算计算器
+    // ----------------------------------------------------
+    const inputPeople = document.getElementById('inputPeople');
+    const labelPeople = document.getElementById('labelPeople');
+    const selectHotel = document.getElementById('selectHotel');
+    const labelHotelPrice = document.getElementById('labelHotelPrice');
+    const selectTransport = document.getElementById('selectTransport');
+    const selectDining = document.getElementById('selectDining');
+
+    // 玩乐复选框
+    const checkDazhao = document.getElementById('checkDazhao');
+    const checkHuanghua = document.getElementById('checkHuanghua');
+    const checkXiangsha = document.getElementById('checkXiangsha');
+    const checkGift = document.getElementById('checkGift');
+
+    // 账单详情显示
+    const resHotel = document.getElementById('resHotel');
+    const resDining = document.getElementById('resDining');
+    const resTransport = document.getElementById('resTransport');
+    const resActivities = document.getElementById('resActivities');
+    const grandTotal = document.getElementById('grandTotal');
+    const perCapita = document.getElementById('perCapita');
+
+    // 柱状图
+    const barHotel = document.getElementById('barHotel');
+    const barDining = document.getElementById('barDining');
+    const barTransport = document.getElementById('barTransport');
+    const barActivities = document.getElementById('barActivities');
+
+    function calculateBudget() {
+      const people = parseInt(inputPeople.value);
+      labelPeople.innerText = `${people} 人`;
+
+      // 1. 住宿：根据人数，默认 2人一间，向上取整。行程包含 5 晚，其中1晚按蒙古包均摊估算。
+      const rooms = Math.ceil(people / 2);
+      const roomRate = parseInt(selectHotel.value);
+      labelHotelPrice.innerText = `¥${roomRate} / 间 / 晚 (${rooms}间房)`;
+      const totalHotelPrice = rooms * roomRate * 5;
+
+      // 2. 餐饮：全天用餐，共6天
+      const diningRate = parseInt(selectDining.value);
+      const totalDiningPrice = people * diningRate * 6;
+
+      // 3. 交通：
+      let totalTransportPrice = 0;
+      const transportRate = parseInt(selectTransport.value);
+      if (transportRate === 400) {
+        // 私人专属包车是按车辆计算，一辆车坐4人。
+        const carsCount = Math.ceil(people / 4);
+        // 共6天行程
+        totalTransportPrice = carsCount * 400 * 6;
+      } else {
+        // 按人头均摊
+        totalTransportPrice = people * transportRate * 6;
+      }
+
+      // 4. 玩乐门票
+      let activityPerPerson = 0;
+      if (checkDazhao.checked) activityPerPerson += parseInt(checkDazhao.dataset.price);
+      if (checkHuanghua.checked) activityPerPerson += parseInt(checkHuanghua.dataset.price);
+      if (checkXiangsha.checked) activityPerPerson += parseInt(checkXiangsha.dataset.price);
+      if (checkGift.checked) activityPerPerson += parseInt(checkGift.dataset.price);
+      
+      const totalActivitiesPrice = people * activityPerPerson;
+
+      // 5. 汇总
+      const sumTotal = totalHotelPrice + totalDiningPrice + totalTransportPrice + totalActivitiesPrice;
+      const perPersonValue = Math.round(sumTotal / people);
+
+      // 显示结果
+      resHotel.innerText = `¥${totalHotelPrice.toLocaleString()}`;
+      resDining.innerText = `¥${totalDiningPrice.toLocaleString()}`;
+      resTransport.innerText = `¥${totalTransportPrice.toLocaleString()}`;
+      resActivities.innerText = `¥${totalActivitiesPrice.toLocaleString()}`;
+      
+      grandTotal.innerText = `¥${sumTotal.toLocaleString()}`;
+      perCapita.innerText = `人均约: ¥${perPersonValue.toLocaleString()} / 人`;
+
+      // 渲染可视化占比图表
+      const maxVal = Math.max(totalHotelPrice, totalDiningPrice, totalTransportPrice, totalActivitiesPrice, 1);
+      barHotel.style.width = (totalHotelPrice / maxVal * 100) + '%';
+      barDining.style.width = (totalDiningPrice / maxVal * 100) + '%';
+      barTransport.style.width = (totalTransportPrice / maxVal * 100) + '%';
+      barActivities.style.width = (totalActivitiesPrice / maxVal * 100) + '%';
+    }
+
+    // 事件监听
+    [inputPeople, selectHotel, selectTransport, selectDining, checkDazhao, checkHuanghua, checkXiangsha, checkGift].forEach(el => {
+      el.addEventListener('input', calculateBudget);
+      el.addEventListener('change', calculateBudget);
+    });
+
+    // 默认执行一次计算
+    calculateBudget();
+
+
+    // ----------------------------------------------------
+    // 5. 互动画廊灯箱浏览器 (Lightbox Gallery)
+    // ----------------------------------------------------
+    const lightbox = document.getElementById('lightbox');
+    const lightboxImg = document.getElementById('lightboxImg');
+    const lightboxCaption = document.getElementById('lightboxCaption');
+    const lightboxClose = document.getElementById('lightboxClose');
+    const lightboxPrev = document.getElementById('lightboxPrev');
+    const lightboxNext = document.getElementById('lightboxNext');
+
+    // 收集页面内所有可放大查看的图源
+    const imagesList = Array.from(document.querySelectorAll('.clickable-img'));
+    let activeImgIndex = 0;
+
+    function openLightbox(index) {
+      activeImgIndex = index;
+      const clickedImg = imagesList[activeImgIndex];
+      lightboxImg.src = clickedImg.src;
+      
+      // 读取图片的 figcaption 或 alt 作为标题
+      let captionText = clickedImg.alt;
+      const figureParent = clickedImg.closest('figure');
+      if (figureParent && figureParent.querySelector('figcaption')) {
+        captionText = figureParent.querySelector('figcaption').innerText;
+      } else {
+        // 如果是行前准备或卡片，看卡片标题
+        const cardParent = clickedImg.closest('.card');
+        if (cardParent && cardParent.querySelector('h3')) {
+          captionText = cardParent.querySelector('h3').innerText;
+        }
+      }
+
+      lightboxCaption.innerText = captionText;
+      lightbox.classList.add('show');
+      document.body.style.overflow = 'hidden'; // 阻止底层滚动
+    }
+
+    function closeLightbox() {
+      lightbox.classList.remove('show');
+      document.body.style.overflow = '';
+    }
+
+    function slideLightbox(direction) {
+      activeImgIndex = (activeImgIndex + direction + imagesList.length) % imagesList.length;
+      openLightbox(activeImgIndex);
+    }
+
+    // 点击事件绑定
+    imagesList.forEach((img, index) => {
+      // 样式上加上可点击手势
+      img.style.cursor = 'zoom-in';
+      img.addEventListener('click', (e) => {
+        e.stopPropagation();
+        openLightbox(index);
+      });
+    });
+
+    lightboxClose.addEventListener('click', closeLightbox);
+    lightboxPrev.addEventListener('click', (e) => { e.stopPropagation(); slideLightbox(-1); });
+    lightboxNext.addEventListener('click', (e) => { e.stopPropagation(); slideLightbox(1); });
+    
+    // 点击遮罩外部自动关闭
+    lightbox.addEventListener('click', (e) => {
+      if (e.target === lightbox || e.target === document.querySelector('.lightbox-content')) {
+        closeLightbox();
+      }
+    });
+
+    // 快捷键盘控制
+    window.addEventListener('keydown', (e) => {
+      if (!lightbox.classList.contains('show')) return;
+      if (e.key === 'Escape') closeLightbox();
+      if (e.key === 'ArrowLeft') slideLightbox(-1);
+      if (e.key === 'ArrowRight') slideLightbox(1);
+    });
+  </script>
+</body>
+</html>
