@@ -4,7 +4,6 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>呼和浩特 6月25日-30日旅行攻略 - 智能旅行指南</title>
-  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="">
   <style>
     :root {
       --primary: #2d6a4f;      /* 草原绿 */
@@ -74,7 +73,7 @@
       color: #fff;
       background:
         linear-gradient(180deg, rgba(17, 26, 22, 0.15) 0%, rgba(17, 26, 22, 0.45) 50%, rgba(20, 30, 26, 0.95) 100%),
-        url("https://commons.wikimedia.org/wiki/Special:FilePath/Hohhot%20Dazhao%20temple.mur.jpg") center/cover no-repeat;
+        url("/img/hero-dazhao") center/cover no-repeat;
       padding-top: 60px;
     }
 
@@ -597,18 +596,74 @@
     .route-map {
       width: 100%;
       height: 310px;
-      background: #e9eeea;
+      position: relative;
+      overflow: hidden;
+      background:
+        linear-gradient(115deg, transparent 0 21%, rgba(255,255,255,0.72) 21% 23%, transparent 23% 100%),
+        linear-gradient(28deg, transparent 0 37%, rgba(255,255,255,0.62) 37% 39%, transparent 39% 100%),
+        repeating-linear-gradient(0deg, rgba(45,106,79,0.035) 0 1px, transparent 1px 28px),
+        repeating-linear-gradient(90deg, rgba(45,106,79,0.035) 0 1px, transparent 1px 28px),
+        #e9eeea;
     }
 
-    .route-map-fallback {
-      display: none;
-      min-height: 180px;
-      padding: 20px;
-      align-items: center;
-      justify-content: center;
-      text-align: center;
+    .route-map::after {
+      content: "本地路线示意图";
+      position: absolute;
+      right: 12px;
+      bottom: 10px;
+      padding: 4px 8px;
+      border: 1px solid rgba(45,106,79,0.18);
+      border-radius: 4px;
       color: var(--text-muted);
-      background: #eef1ed;
+      background: rgba(255,255,255,0.88);
+      font-size: 10px;
+      line-height: 1;
+      pointer-events: none;
+    }
+
+    .route-svg {
+      display: block;
+      width: 100%;
+      height: 100%;
+    }
+
+    .route-svg-line {
+      fill: none;
+      stroke: var(--accent-red);
+      stroke-width: 9;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      stroke-dasharray: 18 14;
+      opacity: 0.82;
+    }
+
+    .route-svg-halo {
+      fill: none;
+      stroke: #fff;
+      stroke-width: 15;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      opacity: 0.8;
+    }
+
+    .route-svg-node {
+      fill: var(--primary);
+      stroke: #fff;
+      stroke-width: 6;
+      filter: drop-shadow(0 3px 5px rgba(29,43,37,0.28));
+    }
+
+    .route-svg-number {
+      fill: #fff;
+      font: 800 20px var(--font-sans);
+      text-anchor: middle;
+      dominant-baseline: central;
+    }
+
+    .route-svg-endpoint {
+      fill: var(--text-main);
+      font: 700 15px var(--font-sans);
+      text-anchor: middle;
     }
 
     .route-stops {
@@ -660,18 +715,6 @@
       background: #fff;
     }
 
-    .leaflet-container {
-      font-family: var(--font-sans);
-    }
-
-    .leaflet-popup-content {
-      margin: 10px 12px;
-      line-height: 1.55;
-    }
-
-    .leaflet-popup-content strong {
-      color: var(--primary);
-    }
 
     /* 时程轨线(高精细轨道设计) */
     .time-list {
@@ -1630,7 +1673,7 @@
         <div class="grid" style="margin-bottom: 30px;">
           <article class="card">
             <div class="card-img-wrapper">
-              <img src="https://commons.wikimedia.org/wiki/Special:FilePath/Exterior%20of%20Bayan%20%28Airport%29%20Station%2C%20Hohhot%20Metro.jpg" alt="呼和浩特机场地铁站" class="clickable-img">
+              <img src="/img/airport-metro" alt="呼和浩特机场地铁站" class="clickable-img">
             </div>
             <div class="card-body">
               <span class="tag">交通</span>
@@ -1641,7 +1684,7 @@
 
           <article class="card">
             <div class="card-img-wrapper">
-              <img src="https://commons.wikimedia.org/wiki/Special:FilePath/Inner%20Mongolia%20Museum%202017%20A.jpg" alt="内蒙古博物院" class="clickable-img">
+              <img src="/img/inner-mongolia-museum" alt="内蒙古博物院" class="clickable-img">
             </div>
             <div class="card-body">
               <span class="tag">预约</span>
@@ -1652,7 +1695,7 @@
 
           <article class="card">
             <div class="card-img-wrapper">
-              <img src="https://commons.wikimedia.org/wiki/Special:FilePath/Huitengxile%20wind%20farm%20873472543.jpg" alt="辉腾锡勒草原风电" class="clickable-img">
+              <img src="/img/huitengxile" alt="辉腾锡勒草原风电" class="clickable-img">
             </div>
             <div class="card-body">
               <span class="tag">装备</span>
@@ -1708,11 +1751,11 @@
               
               <div class="day-gallery">
                 <figure>
-                  <img loading="lazy" src="https://commons.wikimedia.org/wiki/Special:FilePath/Inner%20Mongolia%20Museum%202017%20A.jpg" alt="内蒙古博物院" class="clickable-img">
+                  <img loading="lazy" src="/img/inner-mongolia-museum" alt="内蒙古博物院" class="clickable-img">
                   <figcaption>内蒙古博物院</figcaption>
                 </figure>
                 <figure>
-                  <img loading="lazy" src="https://commons.wikimedia.org/wiki/Special:FilePath/Xilitu%20Zhao%20%2853724498277%29.jpg" alt="席力图召" class="clickable-img">
+                  <img loading="lazy" src="/img/xilitu-zhao" alt="席力图召" class="clickable-img">
                   <figcaption>席力图召</figcaption>
                 </figure>
               </div>
@@ -1777,11 +1820,11 @@
               
               <div class="day-gallery">
                 <figure>
-                  <img loading="lazy" src="https://commons.wikimedia.org/wiki/Special:FilePath/Huitengxile%20wind%20farm%20873472543.jpg" alt="敕勒川草原方向" class="clickable-img">
+                  <img loading="lazy" src="/img/huitengxile" alt="敕勒川草原方向" class="clickable-img">
                   <figcaption>敕勒川高山草原</figcaption>
                 </figure>
                 <figure>
-                  <img loading="lazy" src="https://commons.wikimedia.org/wiki/Special:FilePath/Huanghuogou.jpg" alt="红石崖山地草原方向" class="clickable-img">
+                  <img loading="lazy" src="/img/huanghuagou" alt="红石崖山地草原方向" class="clickable-img">
                   <figcaption>红石崖山地草原</figcaption>
                 </figure>
               </div>
@@ -1862,11 +1905,11 @@
               
               <div class="day-gallery">
                 <figure>
-                  <img loading="lazy" src="https://commons.wikimedia.org/wiki/Special:FilePath/Huitengxile%20wind%20farm%20873472543.jpg" alt="辉腾锡勒草原风车" class="clickable-img">
+                  <img loading="lazy" src="/img/huitengxile" alt="辉腾锡勒草原风车" class="clickable-img">
                   <figcaption>辉腾锡勒草原</figcaption>
                 </figure>
                 <figure>
-                  <img loading="lazy" src="https://commons.wikimedia.org/wiki/Special:FilePath/Wulanhadavolcaniccluster2019.jpg" alt="乌兰哈达火山群" class="clickable-img">
+                  <img loading="lazy" src="/img/ulanhada-volcano" alt="乌兰哈达火山群" class="clickable-img">
                   <figcaption>乌兰哈达火山群</figcaption>
                 </figure>
               </div>
@@ -1935,11 +1978,11 @@
               
               <div class="day-gallery">
                 <figure>
-                  <img loading="lazy" src="https://commons.wikimedia.org/wiki/Special:FilePath/Wulanhadavolcaniccluster2019.jpg" alt="乌兰哈达火山群晨光" class="clickable-img">
+                  <img loading="lazy" src="/img/ulanhada-volcano" alt="乌兰哈达火山群晨光" class="clickable-img">
                   <figcaption>上午：火山蒙古包周边晨光</figcaption>
                 </figure>
                 <figure>
-                  <img loading="lazy" src="https://commons.wikimedia.org/wiki/Special:FilePath/Inner%20Mongolia%20Museum%202017%20A.jpg" alt="呼和浩特现代文化建筑" class="clickable-img">
+                  <img loading="lazy" src="/img/inner-mongolia-museum" alt="呼和浩特现代文化建筑" class="clickable-img">
                   <figcaption>下午：回到呼市看现代文化建筑</figcaption>
                 </figure>
               </div>
@@ -2008,11 +2051,11 @@
               
               <div class="day-gallery">
                 <figure>
-                  <img loading="lazy" src="https://commons.wikimedia.org/wiki/Special:FilePath/Desert%20vehicle%20Xiangshawan.jpg" alt="响沙湾沙漠车" class="clickable-img">
+                  <img loading="lazy" src="/img/xiangshawan-vehicle" alt="响沙湾沙漠车" class="clickable-img">
                   <figcaption>响沙湾</figcaption>
                 </figure>
                 <figure>
-                  <img loading="lazy" src="https://commons.wikimedia.org/wiki/Special:FilePath/Desert%20-%20Inner%20Mongolia%20edit.jpg" alt="内蒙古沙漠景观" class="clickable-img">
+                  <img loading="lazy" src="/img/inner-mongolia-desert" alt="内蒙古沙漠景观" class="clickable-img">
                   <figcaption>库布齐沙漠</figcaption>
                 </figure>
               </div>
@@ -2081,11 +2124,11 @@
               
               <div class="day-gallery">
                 <figure>
-                  <img loading="lazy" src="https://commons.wikimedia.org/wiki/Special:FilePath/Inner%20Mongolia%20Museum%202017%20A.jpg" alt="内蒙古博物院外观" class="clickable-img">
+                  <img loading="lazy" src="/img/inner-mongolia-museum" alt="内蒙古博物院外观" class="clickable-img">
                   <figcaption>内蒙古博物院补逛</figcaption>
                 </figure>
                 <figure>
-                  <img loading="lazy" src="https://commons.wikimedia.org/wiki/Special:FilePath/Exterior%20of%20Bayan%20%28Airport%29%20Station%2C%20Hohhot%20Metro.jpg" alt="呼和浩特机场地铁站" class="clickable-img">
+                  <img loading="lazy" src="/img/airport-metro" alt="呼和浩特机场地铁站" class="clickable-img">
                   <figcaption>白塔机场方向</figcaption>
                 </figure>
               </div>
@@ -2174,7 +2217,7 @@
         <div class="grid">
           <article class="card">
             <div class="card-img-wrapper">
-              <img src="https://commons.wikimedia.org/wiki/Special:FilePath/Hohhot%20Dazhao%20temple.bell%20tower.jpg" alt="大召寺钟楼" class="clickable-img">
+              <img src="/img/dazhao-bell-tower" alt="大召寺钟楼" class="clickable-img">
             </div>
             <div class="card-body">
               <span class="tag">大召寺</span>
@@ -2185,7 +2228,7 @@
 
           <article class="card">
             <div class="card-img-wrapper">
-              <img src="https://commons.wikimedia.org/wiki/Special:FilePath/Zhaojun%20Bowuyuan.jpg" alt="昭君博物院" class="clickable-img">
+              <img src="/img/zhaojun-museum" alt="昭君博物院" class="clickable-img">
             </div>
             <div class="card-body">
               <span class="tag">昭君博物院</span>
@@ -2196,7 +2239,7 @@
 
           <article class="card">
             <div class="card-img-wrapper">
-              <img src="https://commons.wikimedia.org/wiki/Special:FilePath/Five%20Pagoda%20Temple%2C%20Huhhot%2C%20Inner%20Mongolia.JPG" alt="五塔寺" class="clickable-img">
+              <img src="/img/five-pagoda-temple" alt="五塔寺" class="clickable-img">
             </div>
             <div class="card-body">
               <span class="tag">五塔寺</span>
@@ -2207,7 +2250,7 @@
 
           <article class="card">
             <div class="card-img-wrapper">
-              <img src="https://commons.wikimedia.org/wiki/Special:FilePath/Xilitu%20Zhao%20%2853724498277%29.jpg" alt="席力图召" class="clickable-img">
+              <img src="/img/xilitu-zhao" alt="席力图召" class="clickable-img">
             </div>
             <div class="card-body">
               <span class="tag">席力图召</span>
@@ -2218,7 +2261,7 @@
 
           <article class="card">
             <div class="card-img-wrapper">
-              <img src="https://commons.wikimedia.org/wiki/Special:FilePath/Desert%20vehicle%20Xiangshawan.jpg" alt="响沙湾沙漠" class="clickable-img">
+              <img src="/img/xiangshawan-vehicle" alt="响沙湾沙漠" class="clickable-img">
             </div>
             <div class="card-body">
               <span class="tag">响沙湾</span>
@@ -2229,7 +2272,7 @@
 
           <article class="card">
             <div class="card-img-wrapper">
-              <img src="https://commons.wikimedia.org/wiki/Special:FilePath/Great%20Mosque%20of%20Hohhot%20front%20view%20202509.jpg" alt="呼和浩特清真大寺" class="clickable-img">
+              <img src="/img/great-mosque" alt="呼和浩特清真大寺" class="clickable-img">
             </div>
             <div class="card-body">
               <span class="tag">清真大寺</span>
@@ -2685,9 +2728,8 @@
           <a href="https://www.amap.com/place/B01D702QFQ" target="_blank" rel="noreferrer">高德地图：三和元非遗冰煮羊（塞上老街店）地址</a>
           <a href="https://www.amap.com/place/B01D702DH6" target="_blank" rel="noreferrer">高德地图：白老大羊杂稍麦（宽巷子总店）地址</a>
           <a href="https://www.csair.com/h5/cn/tourism_strategy/guonei_lvyougonglve/Huhehot2/1cf4mg5nhose8.shtml" target="_blank" rel="noreferrer">南航旅游攻略：宽巷子美食街位置与推荐店铺</a>
-          <a href="https://commons.wikimedia.org/" target="_blank" rel="noreferrer">Wikimedia Commons：公共领域图片</a>
-          <a href="https://leafletjs.com/reference.html" target="_blank" rel="noreferrer">Leaflet：每日互动路线地图组件</a>
-          <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noreferrer">OpenStreetMap：地图底图与数据署名</a>
+          <a href="https://commons.wikimedia.org/" target="_blank" rel="noreferrer">Wikimedia Commons：图片原始授权来源（由 EdgeOne 同源代理缓存）</a>
+          <a href="https://lbs.amap.com/api/uri-api/guide/travel/route" target="_blank" rel="noreferrer">高德地图：地图跳转与路线查询</a>
         </div>
       </section>
     </main>
@@ -2731,7 +2773,6 @@
     <div>门票、开放时间、天气和交通可能临时调整，出发前一天请再核对景区公众号。</div>
   </footer>
 
-  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
   <script>
     // ----------------------------------------------------
     // 0. 每日互动路线地图
@@ -2808,6 +2849,56 @@
       }
     };
 
+    function createLocalRouteSvg(stops) {
+      const width = 1000;
+      const height = 280;
+      const paddingX = 82;
+      let points = [];
+
+      if (stops.length <= 6) {
+        const gap = (width - paddingX * 2) / Math.max(stops.length - 1, 1);
+        points = stops.map((stop, index) => ({
+          x: paddingX + gap * index,
+          y: index % 2 === 0 ? 112 : 168
+        }));
+      } else {
+        const topCount = Math.ceil(stops.length / 2);
+        const bottomCount = stops.length - topCount;
+        const topGap = (width - paddingX * 2) / Math.max(topCount - 1, 1);
+        const bottomGap = (width - paddingX * 2) / Math.max(bottomCount - 1, 1);
+
+        points = stops.map((stop, index) => {
+          if (index < topCount) {
+            return { x: paddingX + topGap * index, y: 86 };
+          }
+          const bottomIndex = index - topCount;
+          return { x: width - paddingX - bottomGap * bottomIndex, y: 205 };
+        });
+      }
+
+      const pathData = points.map((point, index) =>
+        `${index === 0 ? 'M' : 'L'} ${point.x} ${point.y}`
+      ).join(' ');
+
+      const nodes = points.map((point, index) => `
+        <g role="img" aria-label="${index + 1}. ${stops[index].time} ${stops[index].name}">
+          <title>${index + 1}. ${stops[index].time} ${stops[index].name}</title>
+          <circle class="route-svg-node" cx="${point.x}" cy="${point.y}" r="27"></circle>
+          <text class="route-svg-number" x="${point.x}" y="${point.y + 1}">${index + 1}</text>
+        </g>
+      `).join('');
+
+      return `
+        <svg class="route-svg" viewBox="0 0 ${width} ${height}" preserveAspectRatio="xMidYMid meet" role="img" aria-label="今日行程路线示意图">
+          <path class="route-svg-halo" d="${pathData}"></path>
+          <path class="route-svg-line" d="${pathData}"></path>
+          ${nodes}
+          <text class="route-svg-endpoint" x="${points[0].x}" y="${points[0].y - 44}">出发</text>
+          <text class="route-svg-endpoint" x="${points[points.length - 1].x}" y="${points[points.length - 1].y + 54}">结束</text>
+        </svg>
+      `;
+    }
+
     function buildRouteMapPanels() {
       Object.entries(dailyRoutes).forEach(([dayId, route]) => {
         const day = document.getElementById(dayId);
@@ -2825,7 +2916,6 @@
             <a class="route-map-link" href="${route.amap}" target="_blank" rel="noreferrer">高德查看</a>
           </div>
           <div class="route-map" id="route-map-${dayId}"></div>
-          <div class="route-map-fallback">地图底图暂未加载，可点击右上角在高德地图中查看。</div>
           <ol class="route-stops"></ol>
           <div class="route-map-note">${route.note}</div>
         `;
@@ -2837,54 +2927,7 @@
         ).join('');
 
         const mapElement = panel.querySelector('.route-map');
-        const fallback = panel.querySelector('.route-map-fallback');
-        if (!window.L) {
-          mapElement.style.display = 'none';
-          fallback.style.display = 'flex';
-          return;
-        }
-
-        const map = L.map(mapElement, {
-          scrollWheelZoom: false,
-          zoomControl: true,
-          attributionControl: true
-        });
-
-        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-          maxZoom: 18,
-          attribution: '&copy; OpenStreetMap contributors'
-        }).addTo(map);
-
-        const routePoints = route.stops.map(stop => [stop.lat, stop.lng]);
-        route.stops.forEach((stop, index) => {
-          const markerIcon = L.divIcon({
-            className: '',
-            html: `<span class="route-marker">${index + 1}</span>`,
-            iconSize: [28, 28],
-            iconAnchor: [14, 14],
-            popupAnchor: [0, -13]
-          });
-          L.marker([stop.lat, stop.lng], {
-            icon: markerIcon,
-            title: stop.name,
-            alt: `${index + 1}. ${stop.name}`
-          })
-            .addTo(map)
-            .bindPopup(`<strong>${index + 1}. ${stop.name}</strong><br>${stop.time}`);
-        });
-
-        L.polyline(routePoints, {
-          color: '#a83a32',
-          weight: 4,
-          opacity: 0.82,
-          dashArray: '9 7'
-        }).addTo(map);
-
-        map.fitBounds(routePoints, {
-          padding: [30, 30],
-          maxZoom: 13
-        });
-        L.control.scale({ imperial: false, position: 'bottomleft' }).addTo(map);
+        mapElement.innerHTML = createLocalRouteSvg(route.stops);
       });
     }
 
